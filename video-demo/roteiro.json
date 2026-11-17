@@ -1,0 +1,34 @@
+{
+ "id": "mural-vagas-nesp",
+ "titulo": "Mural de Vagas NESP no App Inatel",
+ "persona": "Lucas Estagiário (GES • 6º período • Mat. 853)",
+ "cta_fala": "Mural de Vagas Nesp. Seu estágio começa no aplicativo do Inatel.",
+ "falas": [
+  "Quantas vagas de estágio você já perdeu por causa do prazo?",
+  "Elas chegam espalhadas: no e-mail, no mural do corredor, no grupo da turma.",
+  "E quando você vê, a inscrição já fechou.",
+  "Agora, o Mural de Vagas do Nesp está dentro do aplicativo do Inatel.",
+  "Ao entrar, o alerta já avisa: quatro vagas para o seu perfil.",
+  "O mural filtra sozinho, pelo seu curso e pelo seu período.",
+  "Escolheu uma vaga? Confira a bolsa, os requisitos e os benefícios.",
+  "Ficou na dúvida? Salve nos favoritos e decida depois.",
+  "Na hora de se candidatar, seu currículo padrão já está no perfil.",
+  "Um toque, e pronto: candidatura enviada, com protocolo.",
+  "Em Minhas Vagas, você acompanha cada etapa: enviado, em análise, entrevista.",
+  "Mural de Vagas Nesp. Seu estágio começa no aplicativo do Inatel."
+ ],
+ "tela": [
+  "Quantas vagas você já perdeu?",
+  "Espalhadas por todo lado",
+  "Inscrição encerrada",
+  "Mural de Vagas NESP",
+  "4 vagas para o seu perfil",
+  "Filtro automático",
+  "Bolsa • Requisitos • Benefícios",
+  "Salve para decidir depois",
+  "Currículo padrão • 1 toque",
+  "Candidatura enviada!",
+  "Enviado → Em análise → Entrevista",
+  "Seu estágio começa no App Inatel"
+ ]
+}
