@@ -2,19 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Award,
-  BellRing,
-  Bookmark,
-  Briefcase,
-  CheckCircle2,
-  ClipboardList,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, BellRing, Briefcase, ChevronRight } from "lucide-react";
 import { IhcBadge } from "@/components/layout/IhcBadge";
 import { useApp } from "@/context/AppContext";
-import { getPrimeiroESegundoNome } from "@/data/mockData";
+import { getPrimeiroNome } from "@/data/mockData";
+import { diasAte } from "@/lib/prazo";
 
 export function WelcomeBanner() {
   const { aluno, vagas, favoritosIds, candidaturas } = useApp();
@@ -23,174 +15,100 @@ export function WelcomeBanner() {
     (v) => v.cursoAlvo === aluno.curso && v.periodoMinimo <= aluno.periodo
   );
 
-  const ultimaCandidatura = candidaturas[0];
-  const nomeSaudacao = getPrimeiroESegundoNome(aluno.nome);
+  // Alerta de prazo (NotificacaoPush.dispararAlertaPrazo): vaga compatível
+  // ainda sem candidatura com inscrição encerrando mais cedo.
+  const proximoPrazo = vagasCompativeis
+    .filter((v) => !candidaturas.some((c) => c.vaga.vagaId === v.vagaId))
+    .map((v) => ({ vaga: v, dias: diasAte(v.prazoInscricao) }))
+    .filter((x): x is { vaga: typeof x.vaga; dias: number } => x.dias !== null && x.dias >= 0)
+    .sort((a, b) => a.dias - b.dias)[0];
 
   const stats = [
-    {
-      label: "Vagas Compatíveis",
-      value: vagasCompativeis.length,
-      icon: Briefcase,
-      href: "/vagas",
-    },
-    {
-      label: "Salvas",
-      value: favoritosIds.length,
-      icon: Bookmark,
-      href: "/vagas?tab=favoritas",
-    },
-    {
-      label: "Candidaturas",
-      value: candidaturas.length,
-      icon: ClipboardList,
-      href: "/minhas-vagas",
-    },
-    {
-      label: "CRA Geral",
-      value: aluno.cra.toFixed(1),
-      icon: Award,
-      href: "/minhas-vagas",
-    },
+    { label: "Compatíveis", value: vagasCompativeis.length, href: "/vagas" },
+    { label: "Favoritas", value: favoritosIds.length, href: "/vagas?tab=favoritas" },
+    { label: "Candidaturas", value: candidaturas.length, href: "/minhas-vagas" },
   ];
 
   return (
     <section
-      aria-label="Resumo do aluno e alertas NESP"
-      className="relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-lg"
+      aria-label="Resumo do aluno"
+      className="relative overflow-hidden rounded-3xl text-white shadow-[0_12px_32px_-12px_rgba(18,106,226,0.55)]"
       style={{
         background:
-          "linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)",
+          "linear-gradient(140deg, var(--accent) 0%, var(--accent-strong) 100%)",
       }}
     >
-      {/* Decorative subtle circles */}
+      <div aria-hidden="true" className="inatel-pattern absolute inset-0 opacity-60 [mask-image:linear-gradient(to_left,black,transparent_70%)]" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10 blur-2xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/10 blur-2xl"
+        className="pointer-events-none absolute -top-24 -right-16 h-72 w-72 rounded-full border-[28px] border-white/[0.07]"
       />
 
-      <div className="relative z-10 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
-        {/* Left: Greeting + Push Alert NESP */}
-        <div className="space-y-4 lg:col-span-7">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>
-                {aluno.curso} • {aluno.periodo}º Período • {aluno.siglaCurso} -{" "}
-                {aluno.matricula}
-              </span>
-            </div>
-            <IhcBadge etapa="HTA 0 & 1.1" metodo="MuralNESP.acessarMural()" />
-          </div>
-
+      <div className="relative grid grid-cols-1 gap-6 p-5 sm:p-7 lg:grid-cols-12 lg:items-end">
+        <div className="min-w-0 space-y-5 lg:col-span-7">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Olá, {nomeSaudacao}!
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-white/75">
+                {aluno.curso} • {aluno.periodo}º período
+              </p>
+              <IhcBadge etapa="HTA 1.1" metodo="acessarAbaVagas()" />
+            </div>
+            <h2 className="mt-1 text-[28px] sm:text-4xl font-extrabold tracking-tight">
+              Olá, {getPrimeiroNome(aluno.nome)}!
             </h2>
-            <p className="mt-1 text-sm text-white/85 max-w-2xl">
-              Acompanhe suas disciplinas de hoje, reserve armários no campus e
-              candidate-se às vagas do Mural NESP com envio em 1-toque.
-            </p>
           </div>
 
-          {/* Integrated Push Alert NESP */}
+          {/* Push NESP: novas vagas + prazo */}
           <Link
-            href="/vagas"
-            className="flex items-start sm:items-center justify-between gap-3 rounded-xl border border-white/20 bg-white/12 p-3.5 backdrop-blur-sm hover:bg-white/20 transition group"
+            href={proximoPrazo ? `/vagas/${proximoPrazo.vaga.vagaId}` : "/vagas"}
+            className="group flex items-center gap-3 rounded-2xl bg-white/12 p-3 ring-1 ring-white/20 backdrop-blur-sm transition hover:bg-white/20"
           >
-            <div className="flex items-start sm:items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-[var(--accent)] shadow-sm">
-                <BellRing className="h-4 w-4" />
-              </div>
-              <div className="text-xs sm:text-sm leading-snug">
-                <span className="font-bold">Alerta NESP Inatel: </span>
-                <span className="text-white/90">
-                  {vagasCompativeis.length > 0 ? (
-                    <>
-                      Você possui{" "}
-                      <strong>
-                        {vagasCompativeis.length} vagas de estágio
-                      </strong>{" "}
-                      compatíveis com {aluno.siglaCurso} - {aluno.matricula}.
-                    </>
-                  ) : (
-                    <>
-                      Confira as{" "}
-                      <strong>{vagas.length} oportunidades de estágio</strong>{" "}
-                      disponíveis no Mural NESP.
-                    </>
-                  )}
-                </span>
-              </div>
-            </div>
-            <span className="hidden sm:inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-bold text-[var(--accent)] group-hover:translate-x-0.5 transition">
-              Ver vagas
-              <ArrowRight className="h-3.5 w-3.5" />
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[var(--accent)]">
+              <BellRing className="h-[18px] w-[18px]" />
+              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-amber-400 ring-2 ring-white" />
             </span>
+            <span className="min-w-0 flex-1 text-sm leading-snug">
+              <strong className="block">
+                {vagasCompativeis.length} vagas para o seu perfil
+              </strong>
+              <span className="block text-white/75 line-clamp-2">
+                {proximoPrazo
+                  ? proximoPrazo.dias === 0
+                    ? `${proximoPrazo.vaga.empresa}: inscrição encerra hoje`
+                    : `${proximoPrazo.vaga.empresa}: encerra em ${proximoPrazo.dias} dia${proximoPrazo.dias > 1 ? "s" : ""}`
+                  : "Confira as novidades do NESP"}
+              </span>
+            </span>
+            <ChevronRight className="h-5 w-5 shrink-0 text-white/70 transition group-hover:translate-x-0.5" />
           </Link>
 
-          {/* Latest Application Live Pill */}
-          {ultimaCandidatura && (
-            <Link
-              href="/minhas-vagas"
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/25 border border-emerald-300/40 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-500/35 transition"
-            >
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-200" />
-              <span>
-                Candidatura #{ultimaCandidatura.candidaturaId} para{" "}
-                <strong>{ultimaCandidatura.vaga.empresa}</strong>:{" "}
-                <span className="underline">{ultimaCandidatura.status}</span>
-              </span>
-            </Link>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3 pt-1">
-            <Link
-              href="/vagas"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-[var(--accent)] shadow-sm hover:bg-white/90 transition"
-            >
-              <Briefcase className="h-4 w-4" />
-              Explorar Mural NESP
-            </Link>
-            <Link
-              href="/minhas-vagas"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-white/20 transition"
-            >
-              <ClipboardList className="h-4 w-4" />
-              Minhas Vagas ({candidaturas.length})
-            </Link>
-          </div>
+          <Link
+            href="/vagas"
+            className="btn bg-white text-[var(--accent)] hover:bg-white/90 w-full sm:w-auto"
+          >
+            <Briefcase className="h-4 w-4" />
+            Abrir Mural de Vagas
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        {/* Right: Quick KPIs */}
-        <div className="grid grid-cols-2 gap-3 lg:col-span-5">
-          {stats.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="flex flex-col justify-between rounded-xl border border-white/15 bg-white/12 p-4 backdrop-blur-sm hover:bg-white/20 transition"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
-                    {item.label}
-                  </span>
-                  <Icon className="h-4 w-4 text-white/85" />
-                </div>
-                <p className="mt-2 text-2xl sm:text-3xl font-extrabold">
-                  {item.value}
-                </p>
-              </Link>
-            );
-          })}
+        <div className="grid grid-cols-3 divide-x divide-white/15 rounded-2xl bg-black/10 ring-1 ring-white/10 lg:col-span-5">
+          {stats.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="px-3 py-3.5 text-center transition hover:bg-white/5 first:rounded-l-2xl last:rounded-r-2xl"
+            >
+              <p className="text-2xl sm:text-3xl font-extrabold tabular-nums">
+                {item.value}
+              </p>
+              <p className="mt-0.5 text-[11px] font-medium text-white/70">
+                {item.label}
+              </p>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-

@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Clock,
   MapPin,
-  Sparkles,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import type { Evento } from "@/types";
@@ -18,17 +17,17 @@ const TYPE_META: Record<
   { label: string; badgeClass: string; fallbackGradient: string }
 > = {
   tech: {
-    label: "Tecnologia & Inovação",
-    badgeClass: "bg-blue-500/90 text-white",
+    label: "Tecnologia",
+    badgeClass: "bg-[#126ae2] text-white",
     fallbackGradient: "from-blue-700 via-indigo-700 to-slate-900",
   },
   cultural: {
-    label: "Integração & Cultura",
+    label: "Cultura",
     badgeClass: "bg-pink-500/90 text-white",
     fallbackGradient: "from-purple-700 via-fuchsia-700 to-slate-900",
   },
   academic: {
-    label: "Carreiras & NESP",
+    label: "Carreiras",
     badgeClass: "bg-emerald-500/90 text-white",
     fallbackGradient: "from-emerald-700 via-teal-700 to-slate-900",
   },
@@ -66,33 +65,20 @@ export function EventosCarousel() {
         if (delta < -45) goPrev();
         setTouchStartX(null);
       }}
-      className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-card)]"
+      className="card flex h-full flex-col overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-5 py-4">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <h2
-              id="heading-eventos"
-              className="text-base font-bold text-[var(--text-primary)]"
-            >
-              Eventos no Campus
-            </h2>
-            <p className="text-xs text-[var(--text-muted)]">
-              Agenda acadêmica, cultural e feiras de estágio
-            </p>
-          </div>
-        </div>
+      <div className="flex items-center justify-between px-5 py-3.5">
+        <h2 id="heading-eventos" className="section-title">
+          Eventos & Notícias
+        </h2>
 
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={goPrev}
             aria-label="Evento anterior"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface-muted)] text-[var(--text-secondary)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -100,7 +86,7 @@ export function EventosCarousel() {
             type="button"
             onClick={goNext}
             aria-label="Próximo evento"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-surface-muted)] text-[var(--text-secondary)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] transition cursor-pointer"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -120,7 +106,7 @@ export function EventosCarousel() {
             return (
               <article
                 key={ev.id}
-                className="relative min-w-full min-h-[280px] sm:min-h-[310px] flex flex-col justify-end"
+                className="relative min-w-full min-h-[260px] sm:min-h-[300px] flex flex-col justify-end"
               >
                 {!isBroken ? (
                   <Image
@@ -152,10 +138,7 @@ export function EventosCarousel() {
                   <h3 className="text-xl sm:text-2xl font-extrabold leading-tight">
                     {ev.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-white/85 max-w-xl leading-relaxed line-clamp-2">
-                    {ev.description}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-medium text-white/90">
+                                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-medium text-white/90">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm">
                       <Calendar className="h-3.5 w-3.5" />
                       {ev.date}

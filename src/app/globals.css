@@ -2,25 +2,27 @@
 
 :root,
 html[data-theme="inatel"] {
-  --bg-app: #f1f5f9;
+  /* Identidade Inatel: azul institucional + neutros frios */
+  --bg-app: #f3f6fb;
   --bg-surface: #ffffff;
-  --bg-surface-muted: #f8fafc;
+  --bg-surface-muted: #f5f7fb;
   --bg-sidebar: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-subtle: #e2e8f0;
+  --text-primary: #0f1b2d;
+  --text-secondary: #46536a;
+  --text-muted: #7a879c;
+  --border-subtle: #e4e9f1;
   --accent: #126ae2;
-  --accent-hover: #0a599b;
-  --accent-soft: rgba(18, 106, 226, 0.1);
+  --accent-hover: #0b55c0;
+  --accent-strong: #0a3f8f;
+  --accent-soft: rgba(18, 106, 226, 0.09);
   --accent-contrast: #ffffff;
-  --success: #16a34a;
-  --success-soft: rgba(22, 163, 74, 0.12);
+  --success: #12a150;
+  --success-soft: rgba(18, 161, 80, 0.1);
   --warning: #d97706;
-  --warning-soft: rgba(217, 119, 6, 0.12);
+  --warning-soft: rgba(217, 119, 6, 0.11);
   --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.12);
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.04);
+  --danger-soft: rgba(220, 38, 38, 0.1);
+  --shadow-card: 0 1px 2px rgba(15, 27, 45, 0.04), 0 6px 20px rgba(15, 27, 45, 0.05);
   color-scheme: light;
 }
 
@@ -35,6 +37,7 @@ html[data-theme="dark"] {
   --border-subtle: #1f2937;
   --accent: #3b82f6;
   --accent-hover: #60a5fa;
+  --accent-strong: #1e3a8a;
   --accent-soft: rgba(59, 130, 246, 0.16);
   --accent-contrast: #ffffff;
   --success: #22c55e;
@@ -58,6 +61,7 @@ html[data-theme="limao"] {
   --border-subtle: #d6eab0;
   --accent: #38184c;
   --accent-hover: #9b0a59;
+  --accent-strong: #24092f;
   --accent-soft: rgba(56, 24, 76, 0.1);
   --accent-contrast: #ffffff;
   --success: #15803d;
@@ -112,4 +116,123 @@ html[data-theme="limao"] {
 
 .animate-modal-in {
   animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+/* ---------- Componentes base (consistência entre telas) ---------- */
+@layer components {
+  .card {
+    border-radius: 1.25rem;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.875rem;
+    padding: 0.7rem 1.1rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      color 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+  }
+  .btn-success {
+    background-color: var(--success);
+    color: #fff;
+  }
+  .btn-success:hover {
+    filter: brightness(0.95);
+  }
+  .btn-ghost {
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .section-title {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Faixa decorativa inspirada no padrão gráfico institucional */
+  .inatel-pattern {
+    background-image: radial-gradient(
+        rgba(255, 255, 255, 0.16) 1px,
+        transparent 1px
+      );
+    background-size: 14px 14px;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 0.28s ease-out both;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-pop {
+  animation: popIn 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
 }

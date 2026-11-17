@@ -17,35 +17,12 @@ import { getPrimeiroESegundoNome } from "@/data/mockData";
 import { IhcBadge } from "./IhcBadge";
 import { InatelLogo, THEME_OPTIONS } from "./Sidebar";
 
-function getPageTitle(pathname: string): { title: string; subtitle: string } {
-  if (pathname === "/") {
-    return {
-      title: "Dashboard Acadêmico",
-      subtitle: "Resumo do semestre, aulas do dia e oportunidades NESP",
-    };
-  }
-  if (pathname === "/vagas") {
-    return {
-      title: "Mural de Vagas NESP",
-      subtitle: "Estágios filtrados automaticamente pelo seu perfil acadêmico",
-    };
-  }
-  if (pathname.startsWith("/vagas/")) {
-    return {
-      title: "Detalhes da Oportunidade",
-      subtitle: "Avalie requisitos, benefícios e envie seu currículo PDF",
-    };
-  }
-  if (pathname === "/minhas-vagas") {
-    return {
-      title: "Minhas Vagas & Currículo",
-      subtitle: "Acompanhe o status das candidaturas em tempo real",
-    };
-  }
-  return {
-    title: "Portal Inatel",
-    subtitle: "Sistema Acadêmico e NESP",
-  };
+function getPageTitle(pathname: string): string {
+  if (pathname === "/") return "Início";
+  if (pathname === "/vagas") return "Mural de Vagas";
+  if (pathname.startsWith("/vagas/")) return "Detalhes da vaga";
+  if (pathname === "/minhas-vagas") return "Minhas Vagas";
+  return "Inatel Acadêmico";
 }
 
 export function Header() {
@@ -72,7 +49,7 @@ export function Header() {
   const notifRef = useRef<HTMLDivElement>(null);
   const themeRef = useRef<HTMLDivElement>(null);
 
-  const pageMeta = getPageTitle(pathname);
+  const pageTitle = getPageTitle(pathname);
 
   useEffect(() => {
     const handleOutside = (e: MouseEvent) => {
@@ -105,21 +82,16 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/85 backdrop-blur-md transition-colors duration-200">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 bg-[var(--accent)] lg:bg-[var(--bg-surface)]/90 lg:border-b lg:border-[var(--border-subtle)] backdrop-blur-md transition-colors duration-200">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-3 px-4 py-2.5 sm:px-6 lg:py-3 lg:px-8">
         {/* Left: Mobile Logo or Desktop Context */}
         <div className="flex items-center gap-3 min-w-0">
-          <Link href="/" className="lg:hidden shrink-0">
-            <InatelLogo className="w-20" />
+          <Link href="/" className="lg:hidden shrink-0" aria-label="Início">
+            <InatelLogo className="w-[72px]" fillColor="#ffffff" />
           </Link>
-          <div className="hidden lg:block min-w-0">
-            <h1 className="truncate text-base font-bold text-[var(--text-primary)]">
-              {pageMeta.title}
-            </h1>
-            <p className="truncate text-xs text-[var(--text-muted)]">
-              {pageMeta.subtitle}
-            </p>
-          </div>
+          <h1 className="hidden lg:block truncate text-lg font-extrabold tracking-tight text-[var(--text-primary)]">
+            {pageTitle}
+          </h1>
         </div>
 
         {/* Center/Right: Quick Search + Actions */}
@@ -127,16 +99,16 @@ export function Header() {
           {/* Quick Search Desktop & Tablet */}
           <form
             onSubmit={handleSearchSubmit}
-            className="relative hidden sm:block w-full max-w-xs lg:w-64 xl:w-72"
+            className="relative hidden lg:block lg:w-64 xl:w-72"
           >
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="search"
               value={buscaGlobal}
               onChange={(e) => setBuscaGlobal(e.target.value)}
-              placeholder="Busca rápida de vagas..."
+              placeholder="Buscar vagas"
               aria-label="Busca rápida de vagas"
-              className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] py-2 pl-9 pr-8 text-xs font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--bg-surface)] focus:outline-none transition"
+              className="w-full rounded-full border border-transparent bg-[var(--bg-surface-muted)] py-2.5 pl-9 pr-8 text-xs font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--bg-surface)] focus:outline-none transition"
             />
             {buscaGlobal && (
               <button
@@ -160,9 +132,9 @@ export function Header() {
               }}
               aria-label="Aparência e Modo Avaliação"
               aria-expanded={themeOpen}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 transition cursor-pointer"
             >
-              <Palette className="h-4 w-4 text-[var(--accent)]" />
+              <Palette className="h-[18px] w-[18px]" />
             </button>
 
             {themeOpen && (
@@ -234,31 +206,24 @@ export function Header() {
               }}
               aria-label="Notificações"
               aria-expanded={notifOpen}
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 lg:bg-[var(--bg-surface-muted)] lg:text-[var(--text-secondary)] lg:hover:text-[var(--accent)] lg:hover:bg-[var(--accent-soft)] transition cursor-pointer"
             >
-              <Bell className="h-4 w-4 text-[var(--accent)]" />
+              <Bell className="h-[18px] w-[18px]" />
               {naoLidasCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-bold text-white shadow-sm">
+                <span className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-bold text-white ring-2 ring-[var(--accent)] lg:ring-[var(--bg-surface)]">
                   {naoLidasCount}
                 </span>
               )}
             </button>
 
             {notifOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-xl animate-modal-in overflow-hidden">
+              <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-xl animate-modal-in overflow-hidden">
                 <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-sm font-bold text-[var(--text-primary)]">
-                        Notificações
-                      </h2>
-                      <IhcBadge etapa="HTA 0" metodo="NotificacaoPush" />
-                    </div>
-                    <p className="text-[11px] text-[var(--text-muted)]">
-                      {naoLidasCount > 0
-                        ? `${naoLidasCount} não lida(s)`
-                        : "Tudo em dia"}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-[var(--text-primary)]">
+                      Notificações
+                    </h2>
+                    <IhcBadge etapa="HTA 0" metodo="NotificacaoPush" />
                   </div>
                   {naoLidasCount > 0 && (
                     <button
@@ -267,7 +232,7 @@ export function Header() {
                       className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[var(--accent)] hover:bg-[var(--accent-soft)] transition cursor-pointer shrink-0"
                     >
                       <CheckCheck className="h-3.5 w-3.5" />
-                      Marcar todas como lidas
+                      Marcar como lidas
                     </button>
                   )}
                 </div>
@@ -311,10 +276,10 @@ export function Header() {
           {/* Student Quick Badge */}
           <Link
             href="/minhas-vagas"
-            className="hidden sm:flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-2.5 py-1.5 hover:border-[var(--accent)] transition"
+            className="hidden lg:flex items-center gap-2 rounded-full bg-[var(--bg-surface-muted)] py-1 pl-1 pr-3.5 hover:bg-[var(--accent-soft)] transition"
             title="Ver Meu Perfil e Candidaturas"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
               {aluno.avatarIniciais}
             </div>
             <div className="text-left leading-tight">
@@ -322,7 +287,7 @@ export function Header() {
                 {getPrimeiroESegundoNome(aluno.nome)}
               </p>
               <p className="text-[10px] text-[var(--text-muted)]">
-                {aluno.siglaCurso} - {aluno.matricula}
+                {aluno.siglaCurso} • {aluno.periodo}º período
               </p>
             </div>
           </Link>
@@ -331,41 +296,14 @@ export function Header() {
           <button
             type="button"
             onClick={logout}
-            aria-label="Trocar Perfil ou Sair"
-            title="Trocar Perfil / Sair"
-            className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-2.5 sm:px-3 text-xs font-bold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition cursor-pointer"
+            aria-label="Trocar perfil ou sair"
+            title="Trocar perfil / Sair"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 lg:bg-transparent lg:text-[var(--text-muted)] lg:hover:bg-[var(--danger-soft)] lg:hover:text-[var(--danger)] transition cursor-pointer"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
-            <span className="hidden md:inline">Trocar Perfil</span>
+            <LogOut className="h-[18px] w-[18px]" />
           </button>
         </div>
-      </div>
-
-      {/* Quick Search Mobile Bar */}
-      <div className="sm:hidden border-t border-[var(--border-subtle)] px-4 py-2">
-        <form onSubmit={handleSearchSubmit} className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
-          <input
-            type="search"
-            value={buscaGlobal}
-            onChange={(e) => setBuscaGlobal(e.target.value)}
-            placeholder="Busca rápida de vagas..."
-            aria-label="Busca rápida de vagas"
-            className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] py-1.5 pl-8 pr-8 text-xs font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--bg-surface)] focus:outline-none transition"
-          />
-          {buscaGlobal && (
-            <button
-              type="button"
-              onClick={() => setBuscaGlobal("")}
-              aria-label="Limpar busca"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--text-muted)]"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </form>
       </div>
     </header>
   );
 }
-

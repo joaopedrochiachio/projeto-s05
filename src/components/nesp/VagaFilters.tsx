@@ -1,14 +1,7 @@
 "use client";
 
-import React from "react";
-import {
-  Filter,
-  RotateCcw,
-  Search,
-  SlidersHorizontal,
-  Sparkles,
-  X,
-} from "lucide-react";
+import React, { useState } from "react";
+import { Check, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { IhcBadge } from "@/components/layout/IhcBadge";
 import { useApp } from "@/context/AppContext";
 import { CURSOS_DISPONIVEIS } from "@/data/mockData";
@@ -27,6 +20,9 @@ interface VagaFiltersProps {
   totalGeral: number;
 }
 
+const encurtar = (curso: string) =>
+  curso === "Todos" ? "Todos os cursos" : curso.replace("Engenharia de ", "Eng. ");
+
 export function VagaFilters({
   busca,
   onBuscaChange,
@@ -41,14 +37,15 @@ export function VagaFilters({
   totalGeral,
 }: VagaFiltersProps) {
   const { aluno } = useApp();
+  const [painelAberto, setPainelAberto] = useState(false);
 
   const cursosOpcoes = CURSOS_DISPONIVEIS.includes(aluno.curso)
     ? CURSOS_DISPONIVEIS
     : [...CURSOS_DISPONIVEIS, aluno.curso];
 
-  const periodosValores = Array.from(
-    new Set([4, 6, 8, aluno.periodo, 10])
-  ).sort((a, b) => a - b);
+  const periodosValores = Array.from(new Set([4, 6, 8, aluno.periodo, 10])).sort(
+    (a, b) => a - b
+  );
 
   const isPadraoMatricula =
     !verTodos &&
@@ -56,165 +53,166 @@ export function VagaFilters({
     filtroPeriodo === aluno.periodo &&
     busca.trim() === "";
 
-  return (
-    <section
-      aria-label="Filtros de vagas NESP"
-      className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)] space-y-4"
-    >
-      {/* Top Smart Profile Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-            <SlidersHorizontal className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold text-[var(--text-primary)]">
-                Filtros Inteligentes por Matrícula
-              </h2>
-              {!verTodos && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--success-soft)] px-2.5 py-0.5 text-[11px] font-bold text-[var(--success)]">
-                  <Sparkles className="h-3 w-3" />
-                  {aluno.siglaCurso} - {aluno.matricula}
-                </span>
-              )}
-              <IhcBadge
-                etapa="HTA 1.2"
-                metodo="VagaEstagio.filtrarVagas()"
-              />
-            </div>
-            <p className="text-xs text-[var(--text-muted)]">
-              Exibindo <strong>{totalFiltradas}</strong> de{" "}
-              <strong>{totalGeral}</strong> vagas no NESP
-            </p>
-          </div>
-        </div>
+  const chipBase =
+    "chip cursor-pointer border py-1.5 px-3 text-xs transition";
+  const chipOn = "border-[var(--accent)] bg-[var(--accent)] text-white";
+  const chipOff =
+    "border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]";
 
-        <div className="flex flex-wrap items-center gap-2">
+  return (
+    <section aria-label="Filtros de vagas" className="space-y-3">
+      {/* Busca */}
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[var(--text-muted)]" />
+        <input
+          id="vaga-search-input"
+          type="search"
+          value={busca}
+          onChange={(e) => onBuscaChange(e.target.value)}
+          placeholder="Buscar vaga, empresa ou skill"
+          aria-label="Buscar vaga, empresa ou skill"
+          className="w-full rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] py-3 pl-11 pr-10 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] shadow-[var(--shadow-card)] focus:border-[var(--accent)] focus:outline-none focus:ring-4 focus:ring-[var(--accent-soft)] transition"
+        />
+        {busca && (
+          <button
+            type="button"
+            onClick={() => onBuscaChange("")}
+            aria-label="Limpar pesquisa"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[var(--text-muted)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Pré-filtro automático pela matrícula (HTA 1.2) */}
+      <div className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+        <button
+          type="button"
+          onClick={() => setPainelAberto((v) => !v)}
+          aria-expanded={painelAberto}
+          className={`${chipBase} ${painelAberto ? chipOn : chipOff}`}
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          Filtros
+        </button>
+
+        <span className="h-5 w-px shrink-0 bg-[var(--border-subtle)]" />
+
+        {verTodos ? (
           <button
             type="button"
             onClick={onToggleVerTodos}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition cursor-pointer ${
-              verTodos
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-primary)] hover:border-[var(--accent)]"
-            }`}
+            className={`${chipBase} ${chipOn}`}
           >
-            <Filter className="h-3.5 w-3.5" />
-            {verTodos
-              ? `Mostrando Todas (${totalGeral})`
-              : `Ver Todas as Vagas (${totalGeral})`}
+            Todas as vagas
+            <X className="h-3.5 w-3.5" />
           </button>
-
-          {!isPadraoMatricula && (
+        ) : (
+          <>
             <button
               type="button"
-              onClick={onResetMatricula}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition cursor-pointer"
+              onClick={() => setPainelAberto(true)}
+              className={`${chipBase} ${chipOn}`}
             >
-              <RotateCcw className="h-3.5 w-3.5" />
-              Restaurar Perfil
+              <Check className="h-3.5 w-3.5" />
+              {encurtar(filtroCurso)}
             </button>
-          )}
-        </div>
+            <button
+              type="button"
+              onClick={() => setPainelAberto(true)}
+              className={`${chipBase} ${chipOn}`}
+            >
+              <Check className="h-3.5 w-3.5" />
+              {filtroPeriodo === 10 ? "Qualquer período" : `Até ${filtroPeriodo}º per.`}
+            </button>
+            <button
+              type="button"
+              onClick={onToggleVerTodos}
+              className={`${chipBase} ${chipOff}`}
+            >
+              Ver todas ({totalGeral})
+            </button>
+          </>
+        )}
+
+        <IhcBadge etapa="HTA 1.2" metodo="Aluno.filtrarVagas()" />
       </div>
 
-      {/* Search + Filters Grid */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-end">
-        {/* Search Input */}
-        <div className="lg:col-span-5">
-          <label
-            htmlFor="vaga-search-input"
-            className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1.5"
+      {/* Painel expandido */}
+      {painelAberto && (
+        <div className="card animate-fade-up space-y-4 p-4">
+          <div>
+            <p className="mb-2 text-xs font-bold text-[var(--text-muted)]">Curso</p>
+            <div className="flex flex-wrap gap-2">
+              {cursosOpcoes.map((curso) => {
+                const active = !verTodos && filtroCurso === curso;
+                return (
+                  <button
+                    key={curso}
+                    type="button"
+                    onClick={() => onCursoChange(curso)}
+                    className={`${chipBase} ${active ? chipOn : chipOff}`}
+                  >
+                    {encurtar(curso)}
+                    {curso === aluno.curso && (
+                      <span className={active ? "text-white/70" : "text-[var(--accent)]"}>
+                        • meu
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 text-xs font-bold text-[var(--text-muted)]">
+              Período mínimo exigido
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {periodosValores.map((valor) => {
+                const active = !verTodos && filtroPeriodo === valor;
+                return (
+                  <button
+                    key={valor}
+                    type="button"
+                    onClick={() => onPeriodoChange(valor)}
+                    className={`${chipBase} ${active ? chipOn : chipOff}`}
+                  >
+                    {valor === 10 ? "Qualquer" : `Até ${valor}º`}
+                    {valor === aluno.periodo && (
+                      <span className={active ? "text-white/70" : "text-[var(--accent)]"}>
+                        • meu
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contagem + restaurar */}
+      <div className="flex items-center justify-between text-xs">
+        <p className="text-[var(--text-muted)]">
+          <strong className="text-[var(--text-primary)]">{totalFiltradas}</strong>{" "}
+          {totalFiltradas === 1 ? "vaga encontrada" : "vagas encontradas"}
+        </p>
+        {!isPadraoMatricula && (
+          <button
+            type="button"
+            onClick={() => {
+              onResetMatricula();
+              setPainelAberto(false);
+            }}
+            className="inline-flex items-center gap-1 font-bold text-[var(--accent)] hover:underline cursor-pointer"
           >
-            Pesquisar Vaga, Empresa ou Skill
-          </label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
-            <input
-              id="vaga-search-input"
-              type="text"
-              value={busca}
-              onChange={(e) => onBuscaChange(e.target.value)}
-              placeholder="Ex: React, TypeScript, ICC, Remoto..."
-              className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] py-2.5 pl-10 pr-9 text-xs sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--bg-surface)] focus:outline-none transition"
-            />
-            {busca && (
-              <button
-                type="button"
-                onClick={() => onBuscaChange("")}
-                aria-label="Limpar pesquisa"
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Course Pills */}
-        <div className="lg:col-span-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
-            Curso Alvo
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {cursosOpcoes.map((curso) => {
-              const active = !verTodos && filtroCurso === curso;
-              const shortLabel =
-                curso === "Todos"
-                  ? "Todos"
-                  : curso.replace("Engenharia de ", "Eng. ");
-              return (
-                <button
-                  key={curso}
-                  type="button"
-                  onClick={() => onCursoChange(curso)}
-                  className={`rounded-xl px-3 py-2 text-xs font-bold transition cursor-pointer ${
-                    active
-                      ? "bg-[var(--accent)] text-white shadow-sm"
-                      : "border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-secondary)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  {shortLabel}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Period Pills */}
-        <div className="lg:col-span-3">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
-            Período Exigido
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {periodosValores.map((valor) => {
-              const active = !verTodos && filtroPeriodo === valor;
-              const label =
-                valor === 10
-                  ? "Todos"
-                  : valor === aluno.periodo
-                    ? `Até ${valor}º P (Meu)`
-                    : `Até ${valor}º P`;
-              return (
-                <button
-                  key={valor}
-                  type="button"
-                  onClick={() => onPeriodoChange(valor)}
-                  className={`rounded-xl px-2.5 py-2 text-xs font-bold transition cursor-pointer ${
-                    active
-                      ? "bg-[var(--accent)] text-white shadow-sm"
-                      : "border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-secondary)] hover:border-[var(--accent)]"
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+            <RotateCcw className="h-3.5 w-3.5" />
+            Restaurar meu perfil
+          </button>
+        )}
       </div>
     </section>
   );
 }
-
