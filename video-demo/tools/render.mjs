@@ -31,7 +31,7 @@ const ff = spawn('ffmpeg', [
   '-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
   ...(comAudio ? ['-ss', String(ini), '-i', audio] : []),
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(fps),
-  ...(comAudio ? ['-c:a', 'aac', '-b:a', '192k', '-shortest'] : []),
+  ...(comAudio ? ['-af', 'loudnorm=I=-14:TP=-1:LRA=11,apad', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-shortest'] : []),
   '-movflags', '+faststart', saida,
 ], { stdio: ['pipe', 'inherit', 'inherit'] });
 

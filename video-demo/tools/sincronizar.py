@@ -112,21 +112,45 @@ def alinhar_por_pausas(arquivo, falas):
     for fala, trechos in zip(falas, grupos):
         ws = fala.split()
         pesos = [len(norm(w)) + 1.5 for w in ws]
+        # encaixa as palavras nos trechos de fala da frase (cada trecho recebe palavras contíguas),
+        # comparando a duração real com a esperada e preferindo cortar na pontuação
+        n, k = len(ws), len(trechos)
+        if k > n:  # mais trechos que palavras: junta os trechos menores
+            trechos = [(trechos[0][0], trechos[-1][1])]
+            k = 1
         falado = sum(b - a for a, b in trechos)
-
-        def real(x):  # posição no tempo falado → tempo real, pulando as pausas
-            for a, b in trechos:
-                if x <= b - a:
-                    return a + x
-                x -= b - a
-            return trechos[-1][1]
-
-        acc = 0.0
-        for w, p in zip(ws, pesos):
-            x0 = falado * acc / sum(pesos)
-            acc += p
-            x1 = falado * acc / sum(pesos)
-            words.append({"w": w, "t0": round(real(x0 + 1e-4), 3), "t1": round(real(x1), 3)})
+        tot = sum(pesos)
+        INF = float("inf")
+        cst = [[INF] * (n + 1) for _ in range(k + 1)]
+        vt = [[0] * (n + 1) for _ in range(k + 1)]
+        cst[0][0] = 0.0
+        for j in range(1, k + 1):
+            dur = trechos[j - 1][1] - trechos[j - 1][0]
+            for e in range(j, n - (k - j) + 1):
+                for s0 in range(j - 1, e):
+                    if cst[j - 1][s0] == INF:
+                        continue
+                    exp = falado * sum(pesos[s0:e]) / tot
+                    c = ((dur - exp) / max(exp, 0.3)) ** 2
+                    if j < k and re.search(r"[,.:;?!]$", ws[e - 1]):
+                        c -= 0.6
+                    if cst[j - 1][s0] + c < cst[j][e]:
+                        cst[j][e] = cst[j - 1][s0] + c
+                        vt[j][e] = s0
+        cortes, e = [], n
+        for j in range(k, 0, -1):
+            s0 = vt[j][e]
+            cortes.append((s0, e))
+            e = s0
+        cortes.reverse()
+        for (a0, b0), (ta, tb) in zip(cortes, trechos):
+            ps = pesos[a0:b0]
+            acc = 0.0
+            for w, p in zip(ws[a0:b0], ps):
+                x0 = (tb - ta) * acc / sum(ps)
+                acc += p
+                x1 = (tb - ta) * acc / sum(ps)
+                words.append({"w": w, "t0": round(ta + x0, 3), "t1": round(ta + x1, 3)})
     return words
 
 
