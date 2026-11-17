@@ -6,7 +6,6 @@ import {
   Archive,
   CheckCircle2,
   Clock,
-  Lock,
   MapPin,
   RotateCcw,
   Shuffle,
@@ -58,27 +57,14 @@ export function ArmarioWidget() {
     <section
       id="armarios"
       aria-labelledby="heading-armarios"
-      className="flex h-full flex-col justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-card)]"
+      className="card flex h-full flex-col justify-between p-5"
     >
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-              <Lock className="h-4 w-4" />
-            </div>
-            <div>
-              <h2
-                id="heading-armarios"
-                className="text-base font-bold text-[var(--text-primary)]"
-              >
-                Reserva de Armário
-              </h2>
-              <p className="text-xs text-[var(--text-muted)]">
-                Sorteio automático válido por 24 horas
-              </p>
-            </div>
-          </div>
+          <h2 id="heading-armarios" className="section-title">
+            Armário
+          </h2>
 
           {aluno.acessibilidade && (
             <span className="inline-flex items-center gap-1 rounded-full bg-[var(--success-soft)] px-2.5 py-1 text-[10px] font-bold text-[var(--success)]">
@@ -131,10 +117,9 @@ export function ArmarioWidget() {
             </button>
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] p-3.5 text-xs text-[var(--text-secondary)]">
-            Escolha o formato abaixo para sortear um armário disponível próximo
-            às suas salas de aula.
-          </div>
+          <p className="text-xs text-[var(--text-muted)]">
+            Escolha o formato e sorteie um armário por 24h.
+          </p>
         )}
 
         {/* Format Options */}
@@ -161,7 +146,7 @@ export function ArmarioWidget() {
               Padrão
             </span>
             <span className="text-[11px] text-[var(--text-muted)]">
-              1 porta • Uso diário
+              1 porta
             </span>
           </button>
 
@@ -187,7 +172,7 @@ export function ArmarioWidget() {
               Duplo
             </span>
             <span className="text-[11px] text-[var(--text-muted)]">
-              2 portas • Mochila + Notebook
+              2 portas
             </span>
           </button>
         </div>
@@ -203,12 +188,12 @@ export function ArmarioWidget() {
       <button
         type="button"
         onClick={handleReservar}
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition cursor-pointer"
+        className="btn btn-primary mt-4 w-full"
       >
         <Shuffle className="h-4 w-4" />
         {armarioReservado
-          ? "Sortear Novo Armário"
-          : "Sortear e Reservar Armário"}
+          ? "Sortear outro"
+          : "Sortear armário"}
       </button>
     </section>
   );

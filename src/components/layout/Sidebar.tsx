@@ -10,7 +10,6 @@ import {
   ClipboardCheck,
   GraduationCap,
   LayoutDashboard,
-  LogOut,
   Moon,
   Sparkles,
   Sun,
@@ -59,7 +58,6 @@ export function Sidebar() {
 
   const {
     aluno,
-    logout,
     tema,
     setTema,
     modoAvaliacaoIhc,
@@ -76,14 +74,14 @@ export function Sidebar() {
   const navItems = [
     {
       href: "/",
-      label: "Dashboard",
+      label: "Início",
       icon: LayoutDashboard,
       active: pathname === "/",
       badge: null as number | null,
     },
     {
       href: "/vagas",
-      label: "Mural NESP",
+      label: "Mural de Vagas",
       icon: Briefcase,
       active:
         (pathname === "/vagas" && tabParam !== "favoritas") ||
@@ -109,45 +107,42 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:left-0 z-30 border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)] transition-colors duration-200">
       {/* Brand */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-subtle)]">
-        <Link href="/" className="flex flex-col gap-1 group">
-          <InatelLogo className="w-24 transition-transform group-hover:scale-[1.02]" />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-            Portal Acadêmico & NESP
-          </span>
+      <div className="flex h-[65px] items-center px-6">
+        <Link href="/" aria-label="Início" className="group">
+          <InatelLogo className="w-[88px] transition-transform group-hover:scale-[1.02]" />
         </Link>
       </div>
 
       {/* Navigation */}
       <nav
         aria-label="Menu principal"
-        className="flex-1 px-4 py-5 space-y-1.5 overflow-y-auto"
+        className="flex-1 px-3 py-4 space-y-1 overflow-y-auto"
       >
-        <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-          Navegação
-        </p>
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all ${
+              className={`relative flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all ${
                 item.active
-                  ? "bg-[var(--accent)] text-[var(--accent-contrast)] shadow-sm"
+                  ? "bg-[var(--accent-soft)] text-[var(--accent)]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)]"
               }`}
             >
+              {item.active && (
+                <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[var(--accent)]" />
+              )}
               <span className="flex items-center gap-3">
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="h-[18px] w-[18px] shrink-0" />
                 {item.label}
               </span>
-              {item.badge !== null && (
+              {item.badge !== null && item.badge > 0 && (
                 <span
-                  className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                  className={`min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] font-bold ${
                     item.active
-                      ? "bg-white/20 text-white"
-                      : "bg-[var(--accent-soft)] text-[var(--accent)]"
+                      ? "bg-[var(--accent)] text-white"
+                      : "bg-[var(--bg-surface-muted)] text-[var(--text-muted)]"
                   }`}
                 >
                   {item.badge}
@@ -157,117 +152,87 @@ export function Sidebar() {
           );
         })}
 
-        {/* Theme Switcher */}
-        <div className="pt-6">
-          <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-            Aparência (Tema)
-          </p>
-          <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-[var(--bg-surface-muted)] p-1.5 border border-[var(--border-subtle)]">
+      </nav>
+
+      {/* Preferências: tema + guia IHC */}
+      <div className="px-4 pb-3 space-y-2">
+        <div className="flex items-center justify-between rounded-xl px-2 py-1.5">
+          <span className="text-xs font-semibold text-[var(--text-muted)]">
+            Tema
+          </span>
+          <div className="flex items-center gap-1.5">
             {THEME_OPTIONS.map((opt) => {
-              const Icon = opt.icon;
               const selected = tema === opt.key;
               return (
                 <button
                   key={opt.key}
                   type="button"
                   onClick={() => setTema(opt.key)}
-                  className={`flex flex-col items-center gap-1 rounded-lg py-2 px-1 text-[11px] font-semibold transition cursor-pointer ${
+                  aria-label={`Tema ${opt.label}`}
+                  title={opt.label}
+                  className={`h-6 w-6 rounded-full transition cursor-pointer ${
                     selected
-                      ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm ring-1 ring-[var(--accent)]"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      ? "ring-2 ring-offset-2 ring-[var(--accent)] ring-offset-[var(--bg-sidebar)]"
+                      : "opacity-70 hover:opacity-100"
                   }`}
-                >
-                  <span
-                    className="flex h-5 w-5 items-center justify-center rounded-full"
-                    style={{ backgroundColor: opt.swatch }}
-                  >
-                    <Icon className="h-3 w-3 text-white" />
-                  </span>
-                  {opt.label}
-                </button>
+                  style={{ backgroundColor: opt.swatch }}
+                />
               );
             })}
           </div>
         </div>
 
-        {/* Toggle Guia HTA / IHC (Avaliação) */}
-        <div className="pt-4">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={modoAvaliacaoIhc}
-            onClick={toggleModoAvaliacaoIhc}
-            className={`flex w-full items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition cursor-pointer ${
-              modoAvaliacaoIhc
-                ? "border-amber-500/60 bg-amber-500/10 text-[var(--text-primary)]"
-                : "border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] text-[var(--text-secondary)] hover:border-[var(--accent)]/50"
+        <button
+          type="button"
+          role="switch"
+          aria-checked={modoAvaliacaoIhc}
+          onClick={toggleModoAvaliacaoIhc}
+          className="flex w-full items-center justify-between gap-2 rounded-xl px-2 py-1.5 text-left cursor-pointer"
+        >
+          <span className="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+            <GraduationCap
+              className={`h-4 w-4 ${modoAvaliacaoIhc ? "text-amber-500" : ""}`}
+            />
+            Guia HTA / IHC
+          </span>
+          <span
+            className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+              modoAvaliacaoIhc ? "bg-amber-500" : "bg-[var(--border-subtle)]"
             }`}
           >
-            <span className="flex items-center gap-2 min-w-0">
-              <GraduationCap
-                className={`h-4 w-4 shrink-0 ${
-                  modoAvaliacaoIhc
-                    ? "text-amber-500"
-                    : "text-[var(--text-muted)]"
-                }`}
-              />
-              <span className="text-[11px] font-semibold leading-tight">
-                Guia HTA / IHC
-                <span className="block text-[10px] text-[var(--text-muted)]">
-                  Modo Avaliação
-                </span>
-              </span>
-            </span>
             <span
-              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                modoAvaliacaoIhc
-                  ? "bg-amber-500"
-                  : "bg-slate-300 dark:bg-slate-700"
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                modoAvaliacaoIhc ? "translate-x-4.5" : "translate-x-1"
               }`}
-            >
-              <span
-                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
-                  modoAvaliacaoIhc ? "translate-x-4.5" : "translate-x-1"
-                }`}
-              />
-            </span>
-          </button>
-        </div>
-      </nav>
+            />
+          </span>
+        </button>
+      </div>
 
       {/* Student Card + Switch Profile / Logout */}
-      <div className="p-4 border-t border-[var(--border-subtle)] space-y-2">
+      <div className="p-3 border-t border-[var(--border-subtle)]">
         <Link
           href="/minhas-vagas"
-          className="flex items-center gap-3 rounded-xl bg-[var(--bg-surface-muted)] p-3 border border-[var(--border-subtle)] hover:border-[var(--accent)] transition"
+          className="flex items-center gap-3 rounded-xl p-2.5 hover:bg-[var(--bg-surface-muted)] transition"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-sm font-bold text-white shadow-sm">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
             {aluno.avatarIniciais}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-[var(--text-primary)]">
+            <p className="truncate text-[13px] font-bold text-[var(--text-primary)]">
               {aluno.nome}
             </p>
             <p className="truncate text-xs text-[var(--text-muted)]">
-              {aluno.siglaCurso} - {aluno.matricula} • {aluno.periodo}º Período
+              {aluno.siglaCurso} • Mat. {aluno.matricula}
             </p>
-            {aluno.acessibilidade && (
-              <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-[var(--success-soft)] px-2 py-0.5 text-[10px] font-bold text-[var(--success)]">
-                <Accessibility className="h-3 w-3" />
-                Acessibilidade
-              </span>
-            )}
           </div>
+          {aluno.acessibilidade && (
+            <Accessibility
+              className="h-4 w-4 shrink-0 text-[var(--success)]"
+              aria-label="Acessibilidade ativa"
+            />
+          )}
         </Link>
-
-        <button
-          type="button"
-          onClick={logout}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition cursor-pointer"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          Trocar Perfil / Sair
-        </button>
       </div>
     </aside>
   );

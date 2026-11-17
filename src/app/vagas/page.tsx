@@ -2,10 +2,11 @@
 
 import React, { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Bookmark, Briefcase, SearchX, Sparkles } from "lucide-react";
+import { Bookmark, SearchX } from "lucide-react";
 import { IhcBadge } from "@/components/layout/IhcBadge";
 import { CandidaturaModal } from "@/components/nesp/CandidaturaModal";
 import { VagaCard } from "@/components/nesp/VagaCard";
+import { NespTabs } from "@/components/nesp/NespTabs";
 import { VagaFilters } from "@/components/nesp/VagaFilters";
 import { useApp } from "@/context/AppContext";
 import type { VagaEstagio } from "@/types";
@@ -89,68 +90,23 @@ function VagasMuralContent() {
   ]);
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner + Tabs */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--accent)]">
-              <Sparkles className="h-3.5 w-3.5" />
-              Núcleo de Estágios e Serviços Profissionais (NESP)
-            </div>
-            <IhcBadge
-              etapa={abaAtiva === "favoritas" ? "HTA 2.B" : "HTA 1.1"}
-              metodo={
-                abaAtiva === "favoritas"
-                  ? "Aluno.listarFavoritos()"
-                  : "MuralNESP.listarVagas()"
-              }
-            />
-          </div>
-          <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">
-            Mural de Oportunidades de Estágio
+    <div className="space-y-5">
+      {/* Título + Abas (wireframe: Mural | Favoritas | Minhas) */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] lg:sr-only">
+            {abaAtiva === "favoritas" ? "Vagas salvas" : "Vagas NESP"}
           </h1>
-          <p className="text-sm text-[var(--text-secondary)]">
-            Vagas verificadas pelo Inatel com filtro automático pelo seu perfil{" "}
-            {aluno.siglaCurso} - {aluno.matricula}.
-          </p>
-        </div>
-
-        {/* Segmented Tabs: Todas vs Favoritas */}
-        <div
-          role="tablist"
-          aria-label="Visualização do mural de vagas"
-          className="inline-flex rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-1 shadow-sm self-start"
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={abaAtiva === "todas"}
-            onClick={() => handleTabChange("todas")}
-            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition cursor-pointer ${
-              abaAtiva === "todas"
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            <Briefcase className="h-3.5 w-3.5" />
-            Explorar Vagas ({vagas.length})
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={abaAtiva === "favoritas"}
-            onClick={() => handleTabChange("favoritas")}
-            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition cursor-pointer ${
+          <IhcBadge
+            etapa={abaAtiva === "favoritas" ? "HTA 2.B" : "HTA 1.1"}
+            metodo={
               abaAtiva === "favoritas"
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            <Bookmark className="h-3.5 w-3.5" />
-            Favoritas ({favoritosIds.length})
-          </button>
+                ? "Aluno.vagasFavoritas"
+                : "UsuarioApp.acessarAbaVagas()"
+            }
+          />
         </div>
+        <NespTabs ativa={abaAtiva === "favoritas" ? "favoritas" : "mural"} />
       </div>
 
       {/* Filters (shown on main Mural tab) */}
@@ -172,7 +128,7 @@ function VagasMuralContent() {
 
       {/* Results Grid or Empty State */}
       {vagasFiltradas.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[var(--border-subtle)] bg-[var(--bg-surface)] p-10 text-center space-y-3">
+        <div className="card p-10 text-center space-y-3 animate-fade-up">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
             {abaAtiva === "favoritas" ? (
               <Bookmark className="h-6 w-6" />
@@ -182,22 +138,22 @@ function VagasMuralContent() {
           </div>
           <h2 className="text-base font-bold text-[var(--text-primary)]">
             {abaAtiva === "favoritas"
-              ? "Nenhuma vaga salva nos favoritos ainda"
-              : "Nenhuma vaga encontrada com os filtros atuais"}
+              ? "Nenhuma vaga salva"
+              : "Nenhuma vaga encontrada"}
           </h2>
           <p className="mx-auto max-w-md text-xs sm:text-sm text-[var(--text-muted)]">
             {abaAtiva === "favoritas"
-              ? "Salve vagas clicando no ícone de marcador para compará-las ou candidatar-se depois."
-              : "Experimente limpar a pesquisa ou exibir todas as vagas disponíveis no NESP."}
+              ? "Toque no marcador de uma vaga para revisá-la depois."
+              : "Limpe a busca ou veja todas as vagas do NESP."}
           </p>
           <div className="pt-2 flex justify-center gap-3">
             {abaAtiva === "favoritas" ? (
               <button
                 type="button"
                 onClick={() => handleTabChange("todas")}
-                className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white hover:bg-[var(--accent-hover)] transition cursor-pointer"
+                className="btn btn-primary"
               >
-                Explorar Mural NESP
+                Ir para o Mural
               </button>
             ) : (
               <>
@@ -207,23 +163,23 @@ function VagasMuralContent() {
                     setVerTodos(true);
                     setBuscaGlobal("");
                   }}
-                  className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white hover:bg-[var(--accent-hover)] transition cursor-pointer"
+                  className="btn btn-primary"
                 >
-                  Ver Todas as Vagas ({vagas.length})
+                  Ver todas ({vagas.length})
                 </button>
                 <button
                   type="button"
                   onClick={handleResetMatricula}
-                  className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
+                  className="btn btn-ghost"
                 >
-                  Restaurar Filtros
+                  Restaurar filtros
                 </button>
               </>
             )}
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
           {vagasFiltradas.map((vaga) => (
             <VagaCard
               key={vaga.vagaId}

@@ -4,13 +4,11 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Building2,
-  CheckCircle2,
+  Check,
   Eye,
   FileCheck2,
   FileText,
   Loader2,
-  Sparkles,
   Upload,
   X,
 } from "lucide-react";
@@ -18,6 +16,7 @@ import { IhcBadge } from "@/components/layout/IhcBadge";
 import { useApp } from "@/context/AppContext";
 import type { Candidatura, VagaEstagio } from "@/types";
 import { CurriculoPreviewModal } from "./CurriculoPreviewModal";
+import { EmpresaAvatar } from "./EmpresaAvatar";
 
 interface CandidaturaModalProps {
   vaga: VagaEstagio | null;
@@ -130,121 +129,156 @@ function CandidaturaModalBody({
           aria-modal="true"
           aria-labelledby="modal-candidatura-title"
           onClick={(e) => e.stopPropagation()}
-          className="animate-modal-in w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-2xl overflow-hidden"
+          className="animate-modal-in w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-start justify-between gap-3 border-b border-[var(--border-subtle)] px-6 py-4">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-[11px] font-bold text-[var(--accent)]">
-                  <Sparkles className="h-3 w-3" />
-                  Candidatura NESP
-                </span>
-                <IhcBadge
-                  etapa="HTA 3.1 & 3.2"
-                  metodo="confirmarCandidatura()"
-                />
+          <div className="relative px-6 pt-5 pb-4">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--border-subtle)] sm:hidden" />
+            <div className="flex items-start gap-3">
+              <EmpresaAvatar empresa={vaga.empresa} size="sm" />
+              <div className="min-w-0 flex-1">
+                <h2
+                  id="modal-candidatura-title"
+                  className="text-base font-extrabold leading-snug text-[var(--text-primary)]"
+                >
+                  {vaga.titulo}
+                </h2>
+                <p className="text-xs text-[var(--text-muted)]">
+                  {vaga.empresa} • R$ {vaga.bolsaAuxilio.toLocaleString("pt-BR")}/mês
+                </p>
               </div>
-              <h2
-                id="modal-candidatura-title"
-                className="mt-1.5 text-base sm:text-lg font-extrabold text-[var(--text-primary)]"
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Fechar"
+                className="-mr-2 -mt-1 rounded-full p-2 text-[var(--text-muted)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
               >
-                {vaga.titulo}
-              </h2>
-              <p className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
-                <Building2 className="h-3.5 w-3.5 text-[var(--accent)]" />
-                {vaga.empresa} • R$ {vaga.bolsaAuxilio.toLocaleString("pt-BR")}
-                /mês
-              </p>
+                <X className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Fechar janela de candidatura"
-              className="rounded-xl p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-            >
-              <X className="h-5 w-5" />
-            </button>
+
+            {/* Progresso: 3.1 Anexar > 3.2 Confirmar > Feedback */}
+            <ol className="mt-4 grid grid-cols-3 gap-1.5" aria-label="Etapas da candidatura">
+              {["Currículo", "Confirmar", "Enviado"].map((etapa, i) => {
+                const atual = candidaturaFinal ? 2 : enviando ? 1 : 0;
+                const feito = i <= atual;
+                return (
+                  <li key={etapa} className="space-y-1">
+                    <span
+                      className={`block h-1 rounded-full transition-colors duration-300 ${
+                        feito
+                          ? candidaturaFinal
+                            ? "bg-[var(--success)]"
+                            : "bg-[var(--accent)]"
+                          : "bg-[var(--border-subtle)]"
+                      }`}
+                    />
+                    <span
+                      className={`block text-[10px] font-bold ${
+                        feito ? "text-[var(--text-primary)]" : "text-[var(--text-muted)]"
+                      }`}
+                    >
+                      {etapa}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
 
           {/* Body */}
-          <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          <div className="px-6 pb-6 space-y-4 max-h-[70vh] overflow-y-auto">
             {candidaturaFinal ? (
-              <div className="space-y-4 text-center py-2">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--success-soft)] text-[var(--success)]">
-                  <CheckCircle2 className="h-8 w-8" />
+              <div className="space-y-5 text-center pt-2 animate-fade-up">
+                <div className="relative mx-auto h-20 w-20">
+                  <span className="absolute inset-0 rounded-full bg-[var(--success)]/20 animate-ping [animation-iteration-count:2]" />
+                  <span className="animate-pop relative flex h-20 w-20 items-center justify-center rounded-full bg-[var(--success)] text-white shadow-lg shadow-[var(--success)]/30">
+                    <Check className="h-10 w-10" strokeWidth={3} />
+                  </span>
                 </div>
                 <div>
-                  <span className="inline-block rounded-full bg-[var(--success)] px-3 py-1 text-xs font-extrabold text-white">
-                    Protocolo NESP #{candidaturaFinal.candidaturaId}
-                  </span>
-                  <h3 className="mt-2.5 text-lg font-bold text-[var(--text-primary)]">
-                    Candidatura Confirmada!
+                  <h3 className="text-xl font-extrabold text-[var(--text-primary)]">
+                    Candidatura enviada!
                   </h3>
-                  <p className="mt-1 text-xs sm:text-sm text-[var(--text-secondary)]">
-                    Seu currículo{" "}
-                    <strong>{candidaturaFinal.curriculoUsado}</strong> foi
-                    encaminhado ao NESP e à empresa{" "}
-                    <strong>{vaga.empresa}</strong>.
+                  <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+                    Seu currículo foi encaminhado à{" "}
+                    <strong>{vaga.empresa}</strong> pelo NESP.
                   </p>
+                  <IhcBadge etapa="Plano 3" metodo="gerarFeedbackVisual()" />
                 </div>
 
-                <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] p-3.5 text-left text-xs space-y-1">
-                  <p className="text-[var(--text-secondary)]">
-                    <strong>Status atual:</strong> {candidaturaFinal.status}
-                  </p>
-                  <p className="text-[var(--text-secondary)]">
-                    <strong>Enviado em:</strong> {candidaturaFinal.dataEnvio}
-                  </p>
-                </div>
+                <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-[var(--border-subtle)] text-left text-xs">
+                  <div className="bg-[var(--bg-surface-muted)] p-3">
+                    <dt className="text-[var(--text-muted)]">Protocolo NESP</dt>
+                    <dd className="mt-0.5 font-extrabold text-[var(--text-primary)]">
+                      #{candidaturaFinal.candidaturaId}
+                    </dd>
+                  </div>
+                  <div className="bg-[var(--bg-surface-muted)] p-3">
+                    <dt className="text-[var(--text-muted)]">Status</dt>
+                    <dd className="mt-0.5 font-extrabold text-[var(--success)]">
+                      {candidaturaFinal.status}
+                    </dd>
+                  </div>
+                  <div className="col-span-2 bg-[var(--bg-surface-muted)] p-3">
+                    <dt className="text-[var(--text-muted)]">Arquivo enviado</dt>
+                    <dd className="mt-0.5 truncate font-bold text-[var(--text-primary)]">
+                      {candidaturaFinal.curriculoUsado}
+                    </dd>
+                  </div>
+                </dl>
 
-                <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-4 py-2.5 text-xs font-bold text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer"
-                  >
-                    Continuar Explorando
-                  </button>
+                <div className="flex flex-col gap-2">
                   <Link
                     href="/minhas-vagas"
                     onClick={onClose}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white hover:bg-[var(--accent-hover)] transition"
+                    className="btn btn-primary w-full py-3 text-sm"
                   >
-                    Acompanhar Status
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    Ver em Minhas Vagas
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="btn w-full text-[var(--text-secondary)] hover:text-[var(--accent)]"
+                  >
+                    Voltar ao Mural
+                  </button>
                 </div>
               </div>
             ) : (
               <>
                 {/* Student Confirmation */}
-                <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] p-3.5 text-xs">
-                  <p className="font-bold text-[var(--text-primary)]">
-                    Dados vinculados a {aluno.siglaCurso} - {aluno.matricula}:
-                  </p>
-                  <p className="mt-0.5 text-[var(--text-secondary)]">
-                    {aluno.nome} • {aluno.curso} ({aluno.periodo}º período) •{" "}
-                    {aluno.email}
-                  </p>
+                <div className="flex items-center gap-3 rounded-2xl bg-[var(--bg-surface-muted)] p-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+                    {aluno.avatarIniciais}
+                  </span>
+                  <div className="min-w-0 text-xs">
+                    <p className="truncate font-bold text-[var(--text-primary)]">
+                      {aluno.nome}
+                    </p>
+                    <p className="truncate text-[var(--text-muted)]">
+                      Mat. {aluno.matricula} • {aluno.siglaCurso} • {aluno.periodo}º período
+                    </p>
+                  </div>
                 </div>
 
                 {/* Step 3.1: PDF Selection */}
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                        Selecione o Currículo em PDF
+                      <p className="text-sm font-bold text-[var(--text-primary)]">
+                        Currículo
                       </p>
                       <IhcBadge etapa="HTA 3.1" metodo="anexarArquivoPDF()" />
                     </div>
                     <button
                       type="button"
                       onClick={() => setPreviewOpen(true)}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-2.5 py-1 text-[11px] font-bold text-[var(--accent)] hover:border-[var(--accent)] transition cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--accent)] hover:underline cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5" />
-                      Visualizar Currículo
+                      Visualizar
                     </button>
                   </div>
 
@@ -252,30 +286,26 @@ function CandidaturaModalBody({
                   <button
                     type="button"
                     onClick={() => setModoArquivo("padrao")}
-                    className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition cursor-pointer ${
+                    className={`flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left transition cursor-pointer ${
                       modoArquivo === "padrao"
                         ? "border-[var(--accent)] bg-[var(--accent-soft)] ring-1 ring-[var(--accent)]"
                         : "border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] hover:border-[var(--accent)]/60"
                     }`}
                   >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)] text-white">
-                      <FileCheck2 className="h-4 w-4" />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
+                      <FileCheck2 className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs sm:text-sm font-bold text-[var(--text-primary)]">
-                          Envio em 1-Toque (Perfil)
+                        <span className="truncate text-sm font-bold text-[var(--text-primary)]">
+                          {curriculoPerfil.nomeArquivo}
                         </span>
-                        <span className="rounded-full bg-[var(--success-soft)] px-2 py-0.5 text-[10px] font-bold text-[var(--success)]">
-                          Recomendado
+                        <span className="chip shrink-0 bg-[var(--success-soft)] text-[var(--success)]">
+                          1 toque
                         </span>
                       </div>
-                      <p className="mt-0.5 truncate text-xs font-medium text-[var(--text-secondary)]">
-                        {curriculoPerfil.nomeArquivo}
-                      </p>
-                      <p className="text-[11px] text-[var(--text-muted)]">
-                        {curriculoPerfil.tamanhoKB} KB • Atualizado em{" "}
-                        {curriculoPerfil.dataUpload} •{" "}
+                      <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                        Padrão do perfil • {curriculoPerfil.tamanhoKB} KB •{" "}
                         {curriculoDados.skills.length} skills
                       </p>
                     </div>
@@ -283,26 +313,26 @@ function CandidaturaModalBody({
 
                   {/* Option 2: Upload New PDF */}
                   <div
-                    className={`rounded-xl border p-3.5 transition ${
+                    className={`rounded-2xl border p-3.5 transition ${
                       modoArquivo === "novo"
                         ? "border-[var(--accent)] bg-[var(--accent-soft)] ring-1 ring-[var(--accent)]"
                         : "border-[var(--border-subtle)] bg-[var(--bg-surface-muted)]"
                     }`}
                   >
                     <label className="flex items-center gap-3 cursor-pointer">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-dashed border-[var(--accent)] bg-[var(--bg-surface)] text-[var(--accent)]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-dashed border-[var(--accent)] bg-[var(--bg-surface)] text-[var(--accent)]">
                         <Upload className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs sm:text-sm font-bold text-[var(--text-primary)]">
                           {arquivoNovo
                             ? arquivoNovo.name
-                            : "Anexar novo currículo (PDF)"}
+                            : "Anexar outro PDF"}
                         </p>
                         <p className="text-[11px] text-[var(--text-muted)]">
                           {arquivoNovo
                             ? `${Math.max(120, Math.round(arquivoNovo.size / 1024))} KB • Pronto para envio`
-                            : "Toque para selecionar um arquivo .pdf do dispositivo"}
+                            : "Selecionar arquivo do dispositivo"}
                         </p>
                       </div>
                       <FileText className="h-4 w-4 text-[var(--text-muted)]" />
@@ -321,18 +351,18 @@ function CandidaturaModalBody({
                         onChange={(e) => setSalvarComoPadrao(e.target.checked)}
                         className="h-3.5 w-3.5 rounded accent-[var(--accent)]"
                       />
-                      Definir novo PDF como padrão do meu perfil NESP
+                      Usar como novo padrão do perfil
                     </label>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col-reverse sm:flex-row gap-2.5 pt-2">
+                <div className="flex flex-col-reverse sm:flex-row gap-2 pt-1">
                   <button
                     type="button"
                     onClick={onClose}
                     disabled={enviando}
-                    className="flex-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-muted)] px-4 py-3 text-xs sm:text-sm font-bold text-[var(--text-primary)] hover:border-[var(--accent)] transition cursor-pointer disabled:opacity-60"
+                    className="btn btn-ghost flex-1 py-3 text-sm"
                   >
                     Cancelar
                   </button>
@@ -340,17 +370,17 @@ function CandidaturaModalBody({
                     type="button"
                     onClick={handleConfirmar}
                     disabled={enviando}
-                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--success)] px-4 py-3 text-xs sm:text-sm font-bold text-white shadow-sm hover:opacity-90 transition cursor-pointer disabled:opacity-70"
+                    className="btn btn-primary flex-[2] py-3 text-sm"
                   >
                     {enviando ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Enviando ao NESP...
+                        Enviando…
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="h-4 w-4" />
-                        Confirmar Candidatura
+                        Confirmar envio
+                        <ArrowRight className="h-4 w-4" />
                       </>
                     )}
                   </button>
