@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Reels em Código — o método</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --noite: #0b0b14; --noite2: #161629; --roxo: #7c5cff; --rosa: #ff3d81; --lima: #c6ff3d;
+  --texto: #14141f; --texto2: #4a4a5e; --mudo: #8a8aa0; --borda: #e6e6ef; --fundo: #f7f7fb;
+}
+html, body { font-family: Inter, sans-serif; color: var(--texto); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.pg { width: 210mm; height: 297mm; position: relative; overflow: hidden; page-break-after: always; padding: 20mm 18mm 22mm; background: #fff; }
+.pg:last-child { page-break-after: auto; }
+.escura { background: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1.2px) 0 0/5mm 5mm, linear-gradient(160deg, var(--noite) 0%, var(--noite2) 100%); color: #fff; }
+.rodape { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--mudo); letter-spacing: .04em; }
+.escura .rodape { color: rgba(255,255,255,.45); }
+.rodape b { color: var(--roxo); font-weight: 800; }
+
+.etapa { display: inline-block; font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--roxo); background: rgba(124,92,255,.1); padding: 1.6mm 3.4mm; border-radius: 99px; }
+h1 { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: 34pt; line-height: 1.02; letter-spacing: .005em; margin: 4mm 0 3mm; text-transform: uppercase; }
+h1 em { font-style: normal; color: var(--roxo); }
+.escura h1 em { color: var(--lima); }
+.lead { font-size: 11.5pt; line-height: 1.5; color: var(--texto2); max-width: 160mm; }
+.escura .lead { color: rgba(255,255,255,.75); }
+h3 { font-size: 11.5pt; font-weight: 800; margin: 7mm 0 2.5mm; }
+p, li { font-size: 10pt; line-height: 1.55; color: var(--texto2); }
+ul.lista { list-style: none; display: grid; gap: 2.2mm; margin-top: 2mm; }
+ul.lista li { padding-left: 6mm; position: relative; }
+ul.lista li::before { content: ''; position: absolute; left: 0; top: 1.9mm; width: 2.4mm; height: 2.4mm; border-radius: 50%; background: var(--roxo); }
+b, strong { color: var(--texto); font-weight: 700; }
+.escura b { color: #fff; }
+code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.4pt; }
+code { background: #f1f0fa; color: #4b32d6; padding: .3mm 1.4mm; border-radius: 1.2mm; }
+pre { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.2pt; line-height: 1.55; background: var(--noite); color: #e8e8f5; padding: 4.5mm 5mm; border-radius: 3.5mm; white-space: pre-wrap; margin-top: 2.5mm; }
+pre .c { color: #8a8aa0; } pre .s { color: var(--lima); } pre .k { color: #ff8fb8; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.card { border: .3mm solid var(--borda); border-radius: 4mm; padding: 5mm; background: #fff; }
+.card h4 { font-size: 10.5pt; font-weight: 800; margin-bottom: 1.5mm; }
+.card p { font-size: 9pt; }
+.dica { border-left: 1.2mm solid var(--lima); background: #f7ffe6; padding: 3.5mm 4.5mm; border-radius: 0 3mm 3mm 0; margin-top: 5mm; }
+.dica.alerta { border-color: var(--rosa); background: #fff0f5; }
+.dica b.t { display: block; font-size: 7.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--texto); margin-bottom: 1mm; }
+.dica p { font-size: 9.2pt; }
+table { width: 100%; border-collapse: collapse; margin-top: 3mm; }
+th { text-align: left; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--mudo); padding: 2mm 2.5mm; border-bottom: .4mm solid var(--texto); }
+td { font-size: 9pt; color: var(--texto2); padding: 2.4mm 2.5mm; border-bottom: .3mm solid var(--borda); vertical-align: top; line-height: 1.45; }
+td b { color: var(--texto); }
+.num { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; margin-top: 6mm; }
+.num div { border-radius: 4mm; padding: 4.5mm; background: var(--fundo); }
+.escura .num div { background: rgba(255,255,255,.06); border: .3mm solid rgba(255,255,255,.1); }
+.num strong { display: block; font-family: Anton, sans-serif; font-weight: 400; font-size: 26pt; line-height: 1; color: var(--roxo); }
+.escura .num strong { color: var(--lima); }
+.num span { display: block; margin-top: 1.5mm; font-size: 8.2pt; color: var(--mudo); line-height: 1.35; }
+img.fig { width: 100%; border-radius: 3.5mm; display: block; }
+.legenda { font-size: 7.8pt; color: var(--mudo); margin-top: 1.8mm; }
+.passos { counter-reset: p; display: grid; gap: 3mm; margin-top: 3mm; }
+.passos > div { counter-increment: p; position: relative; padding-left: 11mm; }
+.passos > div::before { content: counter(p); position: absolute; left: 0; top: 0; width: 7.5mm; height: 7.5mm; border-radius: 50%; background: var(--texto); color: #fff; font-size: 8.5pt; font-weight: 800; display: grid; place-items: center; }
+.passos h4 { font-size: 10pt; font-weight: 800; }
+.passos p { font-size: 9.2pt; }
+
+/* capa */
+.capa { padding: 0; }
+.capa .topo { padding: 20mm 18mm 0; }
+.capa .selo { display: inline-block; font-size: 8pt; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; padding: 2mm 4mm; border-radius: 99px; border: .3mm solid rgba(255,255,255,.25); color: rgba(255,255,255,.8); }
+.capa h1 { font-size: 64pt; line-height: .95; margin-top: 14mm; }
+.capa .lead { font-size: 13pt; margin-top: 6mm; max-width: 140mm; }
+.capa .faixa { position: absolute; left: 0; right: 0; bottom: 46mm; padding: 0 12mm; }
+.capa .faixa img { width: 100%; border-radius: 3mm; box-shadow: 0 8mm 20mm rgba(0,0,0,.5); }
+.capa .autor { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; display: flex; justify-content: space-between; align-items: flex-end; font-size: 9pt; color: rgba(255,255,255,.65); }
+.capa .autor b { display: block; font-size: 12pt; color: #fff; margin-bottom: 1mm; }
+.brilho { position: absolute; width: 140mm; height: 140mm; border-radius: 50%; filter: blur(30mm); opacity: .55; }
+.oferta { border-radius: 5mm; padding: 6mm; color: #fff; }
+.oferta h4 { font-family: Anton, sans-serif; font-weight: 400; font-size: 20pt; text-transform: uppercase; }
+.oferta p { color: rgba(255,255,255,.85); font-size: 9.5pt; margin-top: 2mm; }
+.check { list-style: none; display: grid; gap: 2mm; columns: 2; }
+.check li { padding-left: 7mm; position: relative; font-size: 9.2pt; break-inside: avoid; }
+.check li::before { content: ''; position: absolute; left: 0; top: .8mm; width: 3.6mm; height: 3.6mm; border-radius: 1mm; border: .4mm solid var(--roxo); }
+.erro { display: grid; grid-template-columns: 8mm 1fr; gap: 3mm; padding: 2.6mm 0; border-bottom: .3mm solid var(--borda); }
+.erro i { font-style: normal; font-family: Anton, sans-serif; font-size: 15pt; color: var(--rosa); line-height: 1; }
+.erro h4 { font-size: 9.6pt; font-weight: 800; }
+.erro p { font-size: 8.8pt; line-height: 1.45; }
+.prompt { border: .3mm solid var(--borda); border-radius: 3.5mm; padding: 3.5mm 4.5mm; margin-top: 3mm; }
+.prompt h4 { font-size: 9pt; font-weight: 800; color: var(--roxo); letter-spacing: .02em; }
+.prompt p { font-family: 'JetBrains Mono', monospace; font-size: 7.9pt; line-height: 1.55; color: var(--texto); margin-top: 1.5mm; }
+</style>
+</head>
+<body>
+
+<!-- 1. CAPA -->
+<section class="pg escura capa">
+  <div class="brilho" style="background:#7c5cff;left:-40mm;top:-30mm"></div>
+  <div class="brilho" style="background:#ff3d81;right:-50mm;top:70mm;opacity:.35"></div>
+  <div class="topo" style="position:relative">
+    <span class="selo">Guia prático · Edição 1 · 2026</span>
+    <h1>Reels<br>em <em>Código</em></h1>
+    <p class="lead">O método para criar vídeos de produto <b>programados</b>: prints reais, voz com IA, cada cena entrando na palavra falada, trilha própria e entrega em 60 fps — sem abrir um editor de vídeo.</p>
+  </div>
+  <div class="faixa"><img src="assets/faixa-reel.jpg" alt="Quadros do Reel"></div>
+  <div class="autor">
+    <div><b>João Pedro Chiachio de Paiva</b>Engenharia de Software · Inatel</div>
+    <div style="text-align:right">Inclui case real, prompts<br>prontos e checklists</div>
+  </div>
+</section>
+
+<!-- 2. O QUE VOCÊ VAI CONSEGUIR -->
+<section class="pg">
+  <span class="etapa">Antes de começar</span>
+  <h1>O que você vai <em>conseguir</em></h1>
+  <p class="lead">Este guia ensina a transformar um produto digital em um vídeo vertical que parece feito por um estúdio de motion design — e que você consegue refazer, ajustar e variar em minutos, porque ele é código.</p>
+  <div class="num">
+    <div><strong>52 s</strong><span>de demonstração narrada, do problema ao resultado</span></div>
+    <div><strong>60 fps</strong><span>1080×1920, H.264, áudio em −14 LUFS</span></div>
+    <div><strong>11</strong><span>cenas, cada uma presa a uma palavra da narração</span></div>
+    <div><strong>0</strong><span>editores de vídeo abertos no processo</span></div>
+  </div>
+  <p class="legenda">Números do case real deste guia: o vídeo do Mural de Vagas NESP, um app universitário.</p>
+
+  <div class="grid2" style="margin-top:8mm">
+    <div>
+      <h3 style="margin-top:0">Para quem é</h3>
+      <ul class="lista">
+        <li><b>Devs e estudantes</b> que precisam apresentar um app ou projeto.</li>
+        <li><b>Freelancers</b> que querem vender vídeo de produto sem depender de editor.</li>
+        <li><b>Startups e SaaS</b> que lançam funcionalidades toda semana.</li>
+        <li><b>Criadores</b> que querem um formato que ninguém do nicho faz.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">O caminho em 8 etapas</h3>
+      <table style="margin-top:0">
+        <tr><td><b>1</b> Briefing e prints reais</td><td><b>5</b> Construir as cenas</td></tr>
+        <tr><td><b>2</b> Roteiro para o ouvido</td><td><b>6</b> Trilha e efeitos</td></tr>
+        <tr><td><b>3</b> Voz com IA</td><td><b>7</b> Crítica em rodadas</td></tr>
+        <tr><td><b>4</b> Narração no tempo</td><td><b>8</b> Render e publicação</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="dica"><b class="t">A ideia central</b><p>O vídeo é uma <b>função do tempo</b>: <code>desenhar(t)</code> pinta o quadro do segundo <code>t</code>. As cenas não têm segundos fixos — começam quando a narração diz uma palavra. Trocou a voz? O filme inteiro se reposiciona sozinho.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>2</span></div>
+</section>
+
+<!-- 3. POR QUE PROGRAMADO -->
+<section class="pg">
+  <span class="etapa">Fundamento</span>
+  <h1>Por que vídeo <em>programado</em> vence</h1>
+  <p class="lead">Existem três jeitos de fazer vídeo de produto hoje. Só um deles junta interface real, qualidade de estúdio e custo baixo de refação.</p>
+  <table>
+    <tr><th></th><th>Editor tradicional</th><th>IA de vídeo generativa</th><th>Vídeo programado</th></tr>
+    <tr><td><b>Mostra a tela real</b></td><td>Sim, com muito trabalho manual</td><td>Não — inventa telas que não existem</td><td><b>Sim, prints reais do app</b></td></tr>
+    <tr><td><b>Mudar uma frase</b></td><td>Reeditar cortes e legendas</td><td>Gerar tudo de novo</td><td><b>Um comando, o resto se ajusta</b></td></tr>
+    <tr><td><b>Sincronia com a fala</b></td><td>No olho, quadro a quadro</td><td>Aleatória</td><td><b>Exata, por palavra</b></td></tr>
+    <tr><td><b>Variação para teste A/B</b></td><td>Uma tarde por versão</td><td>Imprevisível</td><td><b>Cor, estilo e voz por parâmetro</b></td></tr>
+    <tr><td><b>Entrega interativa na web</b></td><td>Não</td><td>Não</td><td><b>Sim: o mesmo código vira página</b></td></tr>
+  </table>
+
+  <div class="grid2" style="margin-top:8mm; align-items:start">
+    <div>
+      <h3 style="margin-top:0">O diferencial que vende</h3>
+      <p>O cliente não compra "animação". Compra <b>confiança</b>: ver o produto de verdade funcionando, com ritmo de anúncio. Tela inventada parece mentira; tela real, com toque, transição e resultado, convence.</p>
+      <h3>E o bônus que ninguém entrega</h3>
+      <p>Como o vídeo é código, ele também vira uma <b>página interativa</b>: o cliente pausa, pula por capítulos e lê a legenda sincronizada. No case, cada capítulo mostra a etapa da tarefa do usuário e o método do sistema correspondente.</p>
+    </div>
+    <div>
+      <img class="fig" src="assets/player.jpg" alt="Player interativo">
+      <p class="legenda">O player interativo do case: capítulos, linha do tempo e atalhos de teclado.</p>
+    </div>
+  </div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>3</span></div>
+</section>
+
+<!-- 4. KIT -->
+<section class="pg">
+  <span class="etapa">Ferramentas</span>
+  <h1>O kit <em>mínimo</em></h1>
+  <p class="lead">Nada de Mac obrigatório, nada de After Effects. Roda em Windows, macOS e Linux.</p>
+  <table>
+    <tr><th>Ferramenta</th><th>Papel</th><th>Custo</th></tr>
+    <tr><td><b>Claude Code</b></td><td>O diretor: escreve roteiro, cenas e scripts, roda os comandos, revisa as folhas de contato e corrige.</td><td>Plano Claude</td></tr>
+    <tr><td><b>Node.js + Playwright</b></td><td>Tira os prints do app e renderiza o filme quadro a quadro num navegador sem janela.</td><td>Grátis</td></tr>
+    <tr><td><b>ffmpeg</b></td><td>Codifica o MP4, junta áudio e vídeo, mede e ajusta o volume.</td><td>Grátis</td></tr>
+    <tr><td><b>ElevenLabs</b></td><td>A voz do locutor. Para anúncio comercial, use um plano pago (o gratuito não permite uso comercial).</td><td>A partir de US$ 5/mês</td></tr>
+    <tr><td><b>Python + numpy</b></td><td>Compõe a trilha e os efeitos sonoros em código e sincroniza a voz.</td><td>Grátis</td></tr>
+    <tr><td><b>GitHub Pages</b></td><td>Publica o vídeo interativo e o app como site, com deploy automático.</td><td>Grátis</td></tr>
+  </table>
+  <h3>Estrutura de um projeto</h3>
+<pre><span class="c"># um filme por pasta</span>
+meu-video/
+├─ roteiro.json        <span class="c"># falas + textos de tela (a fonte da verdade)</span>
+├─ vo.json             <span class="c"># tempo de cada palavra (estimado → real)</span>
+├─ film.js             <span class="c"># as cenas: desenhar(ctx, t)</span>
+├─ player.js           <span class="c"># player interativo + modo render</span>
+├─ app/  assets/       <span class="c"># prints reais e imagens</span>
+├─ audio/              <span class="c"># narracao.mp3, mix.mp3</span>
+└─ tools/              <span class="c"># capturar, sincronizar, trilha, contato, render</span></pre>
+  <div class="dica"><b class="t">Base aberta</b><p>O motor de animação (molas, easing, ruído com semente) vem do <b>motion-reel</b> e da <b>Fábrica de Criativos</b> de Filipe Molinari, ambos MIT. Este guia é o método que construí em cima deles, focado em vídeo de produto e venda.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>4</span></div>
+</section>
+
+<!-- 5. ETAPA 1 -->
+<section class="pg">
+  <span class="etapa">Etapa 1</span>
+  <h1>Briefing e <em>prints reais</em></h1>
+  <p class="lead">O vídeo só convence se mostrar a interface de verdade. Por isso a primeira coisa é capturar as telas do produto com precisão — e anotar onde está cada botão.</p>
+  <div class="grid2" style="margin-top:6mm">
+    <div>
+      <h3 style="margin-top:0">O que coletar</h3>
+      <ul class="lista">
+        <li>Produto, público e <b>a dor</b> que resolve.</li>
+        <li>O fluxo principal, passo a passo (o "caminho feliz").</li>
+        <li>Uma <b>persona</b> com nome: os prints ficam com dados reais dela.</li>
+        <li>Marca: logo, cor de destaque, fonte.</li>
+        <li>CTA e canal: direct, WhatsApp, site.</li>
+      </ul>
+      <h3>Como capturar</h3>
+      <p>Um script do Playwright abre o app num "celular" de 390×844 em escala 3×, faz login com a persona, percorre o fluxo e salva cada tela. Junto, grava a <b>posição de cada elemento</b> (card, botão, chip) para o filme recortar e animar esses pedaços depois.</p>
+    </div>
+    <div>
+      <img class="fig" src="assets/home.jpg" alt="Print real" style="width:62%;margin:0 auto;box-shadow:0 6mm 14mm rgba(0,0,0,.18)">
+      <p class="legenda" style="text-align:center">Print real em 1170×2532, com a persona logada.</p>
+    </div>
+  </div>
+<pre><span class="k">const</span> ctx = <span class="k">await</span> browser.newContext({ viewport: { width: <span class="s">390</span>, height: <span class="s">844</span> }, deviceScaleFactor: <span class="s">3</span> });
+<span class="k">await</span> page.screenshot({ path: <span class="s">'app/mural.jpg'</span> });
+telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span class="s">'article'</span>).first()) }  <span class="c">// posição para recortar</span></pre>
+  <div class="dica alerta"><b class="t">Erro que eu cometi</b><p>Capturar com o servidor de desenvolvimento deixa o selo do framework na tela, e capturar logo após uma ação pega o aviso (toast) por cima. Capture a <b>build de produção</b> e espere os avisos sumirem antes de cada print.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>5</span></div>
+</section>
+
+<!-- 6. ETAPA 2 -->
+<section class="pg">
+  <span class="etapa">Etapa 2</span>
+  <h1>Roteiro para o <em>ouvido</em></h1>
+  <p class="lead">O roteiro decide 80% do resultado. Escreva para quem está rolando o feed com o polegar: decide em um segundo e meio se fica.</p>
+  <div class="grid2" style="margin-top:5mm">
+    <div class="card"><h4>Reel de venda · 30 a 35 s</h4>
+      <p><b>Gancho</b> (0–3 s) → <b>dor</b> → <b>virada</b> com boom → <b>como funciona</b> → <b>prova</b> (case real) → <b>oferta</b> → <b>CTA</b> com um verbo e um canal.</p></div>
+    <div class="card"><h4>Demo de produto · 45 a 55 s</h4>
+      <p><b>Problema</b> → <b>virada</b> (nome do produto) → <b>uma cena por etapa da tarefa</b> do usuário → <b>feedback</b> visível → <b>chamada final</b>.</p></div>
+  </div>
+  <table style="margin-top:6mm">
+    <tr><th>Evite</th><th>Prefira</th></tr>
+    <tr><td>"Nossa solução robusta otimiza processos."</td><td><b>"Um toque, e pronto: candidatura enviada."</b></td></tr>
+    <tr><td>"4 vagas", "60fps", "R$ 25 mil" na fala</td><td><b>"quatro vagas", "sessenta quadros", "vinte e cinco mil reais"</b></td></tr>
+    <tr><td>Frases longas com várias vírgulas</td><td><b>4 a 9 palavras, verbo no começo</b></td></tr>
+    <tr><td>Três ideias na mesma cena</td><td><b>Uma ideia por cena, algo novo a cada 2–4 s</b></td></tr>
+  </table>
+  <h3>O formato que o código lê</h3>
+<pre>{ <span class="s">"falas"</span>: [
+    <span class="s">"Já se imaginou fazendo vídeos assim?"</span>,
+    <span class="s">"Sem editor. Sem After Effects. Sem arrastar clipe por clipe."</span>,
+    <span class="s">"Esse vídeo não foi editado. Ele foi programado."</span>,
+    <span class="s">"Me chama no direct."</span> ] }</pre>
+  <div class="dica"><b class="t">Truque de gancho</b><p>Texto na tela <b>no primeiro quadro</b>, nunca tela vazia. No Reel deste guia, "JÁ SE" já está no quadro zero e o resto da frase cai palavra por palavra junto com a voz.</p></div>
+  <div class="dica alerta"><b class="t">Feche antes de gravar</b><p>Uma palavra trocada depois exige voz nova. Feche o roteiro com o cliente <b>antes</b> de gerar a narração.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>6</span></div>
+</section>
+
+<!-- 7. ETAPA 3 -->
+<section class="pg">
+  <span class="etapa">Etapa 3</span>
+  <h1>Voz com <em>IA</em></h1>
+  <p class="lead">Gere o roteiro inteiro de uma vez — a entonação flui entre as frases — em duas ou três tomadas, e escolha a que termina as frases descendo.</p>
+  <table>
+    <tr><th>Parâmetro</th><th>Demo de produto</th><th>Reel de venda</th></tr>
+    <tr><td><b>Modelo</b></td><td>Eleven v3 ou Multilingual v2</td><td>Eleven v3</td></tr>
+    <tr><td><b>Voz</b></td><td>Pronta da biblioteca, pt-BR, jovem e confiante</td><td>Narradora de "hook" viral, energia alta</td></tr>
+    <tr><td><b>Stability</b></td><td>0,50</td><td>0,40 a 0,50</td></tr>
+    <tr><td><b>Style</b></td><td>0,15 a 0,25</td><td>0,30 a 0,45</td></tr>
+    <tr><td><b>Formato</b></td><td colspan="2">MP3 44,1 kHz, 128 kbps (192 kbps só em plano pago)</td></tr>
+  </table>
+  <div class="grid2" style="margin-top:7mm">
+    <div>
+      <h3 style="margin-top:0">Escreva como se fala</h3>
+      <ul class="lista">
+        <li>Números <b>por extenso</b>.</li>
+        <li>Siglas como palavra: <code>Nesp</code>, não <code>N.E.S.P.</code></li>
+        <li>Grafia fonética só se a voz errar: <code>Áfter Efécts</code>, <code>diréct</code>.</li>
+        <li>Quebras de linha entre frases: viram pausas que ajudam a sincronia.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Marcações (Eleven v3)</h3>
+      <p>Use pouco, só onde a tomada sem marcação ficou monótona:</p>
+<pre>[excited] Já se imaginou fazendo vídeos assim?
+Esse vídeo não foi editado...
+[confident] Ele foi programado.</pre>
+    </div>
+  </div>
+  <div class="dica"><b class="t">Por que voz pronta</b><p>Vozes da biblioteca soam melhor em português do que clones caseiros. No case, a voz "Marcio – Viral Hook Narrator" entregou 50 segundos limpos na primeira tomada.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>7</span></div>
+</section>
+
+<!-- 8. ETAPA 4 -->
+<section class="pg">
+  <span class="etapa">Etapa 4</span>
+  <h1>Narração no <em>tempo</em></h1>
+  <p class="lead">A técnica que faz o vídeo parecer editado à mão: cada cena e cada efeito começam numa palavra falada. Para isso, você precisa saber em que segundo cada palavra acontece.</p>
+  <div class="passos" style="margin-top:6mm">
+    <div><h4>Antes da voz existir: tempos estimados</h4><p>Um script estima a duração de cada palavra pelo número de letras e monta o <code>vo.json</code>. Assim você constrói e revisa o filme inteiro antes de gravar.</p></div>
+    <div><h4>Com o MP3 na mão: sincronização pelas pausas</h4><p>O ffmpeg detecta os trechos de fala e as pausas reais do áudio. Uma programação dinâmica encaixa as frases do roteiro nesses trechos, preferindo fronteiras nas pausas longas. Dentro da frase, as palavras são distribuídas pelos trechos respeitando a pontuação.</p></div>
+    <div><h4>Whisper, se você tiver</h4><p>Com o Whisper instalado, o mesmo script usa o tempo de cada palavra reconhecida. Sem ele — ou com a rede bloqueando o modelo, como aconteceu comigo — as pausas dão conta.</p></div>
+  </div>
+<pre><span class="c"># no filme, a cena começa na palavra, não num segundo fixo</span>
+<span class="k">const</span> tProgramado = wt(VO, <span class="s">'programado.'</span>);
+<span class="k">const</span> tCTA        = ph(VO, -1).t0;          <span class="c">// início da última frase</span>
+HITS.push([tProgramado, <span class="s">'boom'</span>]);           <span class="c">// o efeito sonoro vai junto</span></pre>
+  <div class="num" style="grid-template-columns:repeat(3,1fr)">
+    <div><strong>12/12</strong><span>frases do case encaixadas em pausas reais</span></div>
+    <div><strong>6 ms</strong><span>erro máximo de início de frase no teste com tempos conhecidos</span></div>
+    <div><strong>1 cmd</strong><span><code>python3 tools/sincronizar.py narracao.mp3</code></span></div>
+  </div>
+  <div class="dica"><b class="t">O ganho escondido</b><p>Com as cenas presas às palavras, trocar a voz, o ritmo ou o locutor não quebra nada. Uma variação de voz para teste A/B custa um comando.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>8</span></div>
+</section>
+
+<!-- 9. ETAPA 5 -->
+<section class="pg">
+  <span class="etapa">Etapa 5</span>
+  <h1>Construindo as <em>cenas</em></h1>
+  <p class="lead">O filme é desenhado num canvas de 1080×1920. Cada técnica abaixo é uma função pequena, reaproveitada de vídeo em vídeo.</p>
+  <table style="margin-top:2mm">
+    <tr><th>Técnica</th><th>O que faz</th><th>Onde usar</th></tr>
+    <tr><td><b>Molas</b></td><td>Todo movimento entra com peso, passa um pouco e assenta. Nada de movimento linear.</td><td>Sempre</td></tr>
+    <tr><td><b>Título com desfoque</b></td><td>Cada palavra entra desfocada e subindo, com 60 ms de atraso entre elas.</td><td>Demo, tom institucional</td></tr>
+    <tr><td><b>Slam</b></td><td>A palavra cai grande e assenta com mola. A linguagem nativa de Reels.</td><td>Reel de venda</td></tr>
+    <tr><td><b>Celular com tela real</b></td><td>O print dentro de um aparelho, com status bar e reflexo de vidro.</td><td>Toda prova de produto</td></tr>
+    <tr><td><b>Fragmentos</b></td><td>Recortes reais da tela (card, botão) saem do celular e flutuam à frente.</td><td>Destacar uma função</td></tr>
+    <tr><td><b>Dedo e toque</b></td><td>Um dedo anda até o botão, toca e um anel se expande.</td><td>Mostrar uso real</td></tr>
+    <tr><td><b>Drops e boom</b></td><td>Emoji que salta, tremor de câmera, flash e corte de música no impacto.</td><td>Viradas do Reel</td></tr>
+    <tr><td><b>Legenda queimada</b></td><td>A frase falada com a palavra atual em destaque, dentro da área segura.</td><td>Todo Reel</td></tr>
+  </table>
+  <div class="grid3" style="margin-top:6mm">
+    <div><img class="fig" src="assets/reel_276.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Slam + risco: "EDITADO" um instante antes do boom.</p></div>
+    <div><img class="fig" src="assets/reel_632.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Contador de 60 fps e drop 🔥.</p></div>
+    <div><img class="fig" src="assets/reel_960.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">CTA: tela de direct com toque.</p></div>
+  </div>
+  <div class="dica alerta"><b class="t">Contrato do render</b><p>Sem <code>Math.random</code>, sem timers, sem estado entre quadros: tudo calculado a partir de <code>t</code>. O renderizador pede quadros fora de ordem e o resultado precisa ser idêntico.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>9</span></div>
+</section>
+
+<!-- 10. ETAPA 6 -->
+<section class="pg">
+  <span class="etapa">Etapa 6</span>
+  <h1>Trilha e <em>efeitos</em></h1>
+  <p class="lead">A trilha é composta em código, sem banco de música e sem direito autoral. Os efeitos caem nos mesmos instantes das cenas, porque vêm da mesma lista.</p>
+  <div class="grid2" style="margin-top:5mm">
+    <div>
+      <h3 style="margin-top:0">A trilha</h3>
+      <ul class="lista">
+        <li><b>120 BPM</b>: bumbo, palmas, chimbal, baixo e arpejo sobre Lá menor · Fá · Dó · Sol.</li>
+        <li><b>Gancho filtrado</b> que abre até o primeiro corte.</li>
+        <li><b>Silêncio de 0,3 s antes de cada boom</b>: o impacto parece maior.</li>
+        <li><b>Ducking</b>: a trilha abaixa sozinha quando a voz fala.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Os efeitos</h3>
+      <table style="margin-top:0">
+        <tr><td><b>boom</b></td><td>virada, 60 fps, envio da mensagem</td></tr>
+        <tr><td><b>whoosh</b></td><td>troca de cena forte</td></tr>
+        <tr><td><b>pop</b></td><td>adesivo, emoji, cartão</td></tr>
+        <tr><td><b>tick</b></td><td>cada palavra na cena "palavra"</td></tr>
+        <tr><td><b>teclado</b></td><td>roteiro sendo digitado</td></tr>
+        <tr><td><b>ding</b></td><td>"pronto pra postar"</td></tr>
+      </table>
+    </div>
+  </div>
+<pre><span class="c"># a lista de efeitos sai do próprio filme</span>
+node tools/hits.mjs http://localhost:8091/index.html   <span class="c"># → hits.json</span>
+python3 tools/trilha.py                               <span class="c"># → audio/mix.mp3 em −14 LUFS</span></pre>
+  <div class="dica"><b class="t">Volume certo para as redes</b><p>Meça e ajuste em <b>duas passadas</b> (loudnorm do ffmpeg): −14 LUFS e pico de −1 dBTP. Uma passada só costuma ficar 1 a 2 dB abaixo.</p></div>
+  <div class="dica alerta"><b class="t">Efeito em todo corte vira barulho</b><p>Reserve o boom para as viradas e o CTA. Nos outros cortes, um pop leve ou nada.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>10</span></div>
+</section>
+
+<!-- 11. ETAPA 7 -->
+<section class="pg">
+  <span class="etapa">Etapa 7</span>
+  <h1>Crítica em <em>rodadas</em></h1>
+  <p class="lead">Nenhum vídeo sai sem pelo menos duas rodadas de revisão em folhas de contato: um quadro por momento importante, lado a lado.</p>
+  <img class="fig" src="assets/contato.jpg" alt="Folha de contato" style="margin-top:5mm;height:112mm;object-fit:cover;object-position:top">
+  <p class="legenda">Folha de contato do case nos tempos reais da narração: cada efeito conferido contra a palavra falada.</p>
+  <div class="grid2" style="margin-top:5mm">
+    <div>
+      <h3 style="margin-top:0">O que conferir</h3>
+      <ul class="lista">
+        <li><b>Gancho</b> com texto no primeiro quadro.</li>
+        <li><b>Leitura</b> no tamanho de um celular na mão.</li>
+        <li><b>Nada encobrindo título</b> (celular subindo por cima).</li>
+        <li><b>Área segura do Reels</b>: nada importante nos 430 px de baixo nem na coluna de botões à direita.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">O que encontrei no case</h3>
+      <ul class="lista">
+        <li>Títulos invisíveis por uma opacidade que virava <code>NaN</code>.</li>
+        <li>Cor <code>#fff</code> quebrando a mistura de cores (use <code>#ffffff</code>).</li>
+        <li>"0 vagas" aparecendo antes da palavra "quatro".</li>
+        <li>Palavra gigante estourando a largura no impacto.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>11</span></div>
+</section>
+
+<!-- 12. ETAPA 8 -->
+<section class="pg">
+  <span class="etapa">Etapa 8</span>
+  <h1>Render e <em>publicação</em></h1>
+  <p class="lead">Duas entregas do mesmo código: o MP4 para postar e a página interativa para o cliente, o portfólio ou a banca.</p>
+  <div class="grid2" style="margin-top:5mm">
+    <div class="card"><h4>MP4 para as redes</h4><p>O Playwright abre o filme em modo render, chama <code>seek(t)</code> quadro a quadro e envia ao ffmpeg. Saída: 1080×1920, 60 fps, H.264 yuv420p, AAC 48 kHz.</p>
+<pre>node tools/render.mjs URL --fps 60</pre></div>
+    <div class="card"><h4>Página interativa</h4><p>O mesmo filme com player: capítulos, linha do tempo, legenda karaokê, velocidade e tela cheia. Publicada no GitHub Pages com deploy automático a cada merge.</p>
+<pre>Settings → Pages → Source: GitHub Actions</pre></div>
+  </div>
+  <h3>Publicando no GitHub Pages, sem tropeço</h3>
+  <div class="passos">
+    <div><h4>Ative o Pages com a fonte certa primeiro</h4><p>Em <b>Settings → Pages</b>, escolha <b>GitHub Actions</b>. Não escolha "Deploy from a branch": ele publica o README em vez do site.</p></div>
+    <div><h4>Faça o merge do workflow no branch principal</h4><p>O deploy só é permitido a partir do branch padrão.</p></div>
+    <div><h4>Configure o caminho do repositório</h4><p>Num site Next.js: <code>output: 'export'</code>, <code>basePath: '/nome-do-repo'</code> e <code>trailingSlash: true</code>.</p></div>
+    <div><h4>Teste o áudio no celular</h4><p>Celulares não carregam áudio antes de um toque. O play precisa chamar <code>audio.play()</code> no próprio clique.</p></div>
+  </div>
+  <img class="fig" src="assets/faixa-nesp.jpg" alt="Quadros do case" style="margin-top:6mm">
+  <p class="legenda">Quadros do vídeo final do case, publicado com o app no GitHub Pages.</p>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>12</span></div>
+</section>
+
+<!-- 13. ERROS -->
+<section class="pg">
+  <span class="etapa">Aprenda com os meus</span>
+  <h1>Erros que custam <em>caro</em></h1>
+  <p class="lead">Todos aconteceram de verdade na produção do case. Cada um custou de minutos a horas.</p>
+  <div style="margin-top:4mm">
+    <div class="erro"><i>01</i><div><h4>Pages publicando o README</h4><p>A fonte estava em "Deploy from a branch", apontando para o branch errado. <b>Correção:</b> Source em GitHub Actions e rodar o workflow de novo.</p></div></div>
+    <div class="erro"><i>02</i><div><h4>Merge antes de ativar o Pages</h4><p>O build passou, mas o deploy falhou com 404. <b>Correção:</b> ative o Pages antes do primeiro merge do workflow.</p></div></div>
+    <div class="erro"><i>03</i><div><h4>Vídeo sem som no celular</h4><p>O player esperava o áudio "carregar" para ligar o som, e o celular nunca carrega antes do toque. <b>Correção:</b> tocar o áudio no próprio clique.</p></div></div>
+    <div class="erro"><i>04</i><div><h4>Final cortado</h4><p>O fim do áudio pausava o filme, que era 2 s mais longo. <b>Correção:</b> o relógio interno continua quando o áudio acaba.</p></div></div>
+    <div class="erro"><i>05</i><div><h4>Seek voltando para o zero</h4><p>Servidor de teste sem HTTP Range não deixa o navegador pular no áudio. <b>Correção:</b> testar com servidor que aceita Range e não deixar o vídeo seguir um áudio desalinhado.</p></div></div>
+    <div class="erro"><i>06</i><div><h4>Página travando</h4><p>Desfoque aplicado no quadro inteiro de 1080×1920 a cada palavra. <b>Correção:</b> desfocar a palavra num canvas pequeno e guardar em cache.</p></div></div>
+    <div class="erro"><i>07</i><div><h4>Prints com aviso por cima</h4><p>A captura pegou o toast de confirmação. <b>Correção:</b> esperar o aviso sumir e capturar a build de produção.</p></div></div>
+    <div class="erro"><i>08</i><div><h4>Arquivo de cache no repositório</h4><p>Um <code>__pycache__</code> entrou no commit. <b>Correção:</b> <code>.gitignore</code> desde o primeiro dia.</p></div></div>
+    <div class="erro"><i>09</i><div><h4>Narração antes de fechar o roteiro</h4><p>Trocar uma palavra depois exige voz nova e novo render. <b>Correção:</b> aprovar o texto antes de gerar a voz.</p></div></div>
+    <div class="erro"><i>10</i><div><h4>Conteúdo atrás da interface do Instagram</h4><p>Legenda e adesivos na faixa de baixo ficam escondidos pela legenda do post. <b>Correção:</b> respeitar a área segura.</p></div></div>
+  </div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>13</span></div>
+</section>
+
+<!-- 14. PROMPTS -->
+<section class="pg">
+  <span class="etapa">Atalhos</span>
+  <h1>Prompts <em>prontos</em></h1>
+  <p class="lead">Cole no Claude Code, na pasta do projeto, um de cada vez. Troque o que está entre colchetes.</p>
+  <div class="prompt"><h4>1 · Prints reais</h4><p>Rode a build de produção do app e escreva tools/capturar.mjs com Playwright (390×844, escala 3). Faça login como [persona], percorra [fluxo] e salve um JPG por tela em app/, mais app/telas.json com a posição de [elementos]. Espere os toasts sumirem antes de cada print.</p></div>
+  <div class="prompt"><h4>2 · Roteiro</h4><p>Escreva roteiro.json para um [Reel de venda de 30 s | demo de 50 s] de [produto] para [público]. Estrutura: gancho, dor, virada, como funciona, prova, CTA para [canal]. Frases de 4 a 9 palavras, números por extenso, uma ideia por cena.</p></div>
+  <div class="prompt"><h4>3 · Filme</h4><p>Crie film.js e player.js: canvas 1080×1920, desenhar(ctx, t) puro, cenas presas às palavras do vo.json com wt(). Use molas, [slam e drops de emoji | títulos com desfoque], celular com os prints reais e legenda queimada na área segura. Exporte HITS com os efeitos de cada cena.</p></div>
+  <div class="prompt"><h4>4 · Crítica</h4><p>Gere uma folha de contato com um quadro por cena. Dê nota de 1 a 10 para gancho, leitura no celular, movimento, variedade e área segura. Corrija os três piores pontos e repita até tudo passar de 8.</p></div>
+  <div class="prompt"><h4>5 · Voz e sincronia</h4><p>Aqui está a narração: [arquivo.mp3]. Rode tools/sincronizar.py, confira se cada frase caiu numa pausa real, gere a trilha com ducking e renderize o MP4 final em 60 fps a −14 LUFS.</p></div>
+  <div class="prompt"><h4>6 · Publicação</h4><p>Publique o projeto no GitHub Pages com um workflow de Actions (export estático, basePath do repositório, a página interativa em /demo). Teste o fluxo inteiro sob o caminho do repositório e o áudio no celular antes do merge.</p></div>
+  <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>14</span></div>
+</section>
+
+<!-- 15. CHECKLIST + OFERTA -->
+<section class="pg escura">
+  <div class="brilho" style="background:#7c5cff;right:-50mm;top:-40mm;opacity:.4"></div>
+  <span class="etapa" style="background:rgba(198,255,61,.12);color:var(--lima)">Para fechar</span>
+  <h1>Checklist de <em>entrega</em></h1>
+  <ul class="check" style="margin-top:5mm">
+    <li style="color:rgba(255,255,255,.85)">Texto na tela no primeiro quadro</li>
+    <li style="color:rgba(255,255,255,.85)">Só telas reais do produto</li>
+    <li style="color:rgba(255,255,255,.85)">Roteiro aprovado antes da voz</li>
+    <li style="color:rgba(255,255,255,.85)">Cada frase sincronizada numa pausa real</li>
+    <li style="color:rgba(255,255,255,.85)">Legenda e CTA na área segura</li>
+    <li style="color:rgba(255,255,255,.85)">Boom só nas viradas e no CTA</li>
+    <li style="color:rgba(255,255,255,.85)">1080×1920, 60 fps, −14 LUFS</li>
+    <li style="color:rgba(255,255,255,.85)">Áudio testado no celular</li>
+  </ul>
+
+  <h1 style="margin-top:12mm; font-size:30pt">Quer pular para o <em>resultado</em>?</h1>
+  <div class="grid2" style="margin-top:4mm">
+    <div class="oferta" style="background:linear-gradient(140deg,#c6ff3d,#7ee05b);color:#0b0b14"><h4>🎬 Faço pra você</h4><p style="color:#1d2a10">Vídeo do seu produto com prints reais, voz, trilha e página interativa. Você aprova o roteiro, eu entrego pronto pra postar.</p></div>
+    <div class="oferta" style="background:linear-gradient(140deg,#ff3d81,#7c5cff)"><h4>📘 Te ensino</h4><p>Acompanhamento para montar o seu primeiro vídeo com este método, do briefing à publicação.</p></div>
+  </div>
+  <p class="lead" style="margin-top:7mm; font-size:14pt"><b style="color:var(--lima)">Me chama no direct</b> ou comenta <b>"VÍDEO"</b> no Reel.</p>
+
+  <div style="position:absolute; left:18mm; right:18mm; bottom:22mm; font-size:7.6pt; line-height:1.55; color:rgba(255,255,255,.5)">
+    <b style="color:rgba(255,255,255,.75)">Créditos.</b> Motor de animação derivado do motion-reel (Aries Spring) e da Fábrica de Criativos (Filipe Molinari), licença MIT.
+    O método de referência: MOLINARI, Filipe. <i>Fábrica de Criativos</i>, 2026, CC BY 4.0. Este guia é uma obra própria, construída sobre o case Mural de Vagas NESP (Inatel).
+  </div>
+  <div class="rodape"><span><b style="color:var(--lima)">Reels em Código</b> · João Pedro Chiachio de Paiva</span><span>15</span></div>
+</section>
+
+</body>
+</html>
