@@ -29,6 +29,7 @@ export function setup(vo, roteiro, telas) {
     s1: 0, incrivel: wt(VO, 'incrível.'),
     s2: a(1), nem: wt(VO, 'nem'),
     s3: a(2), toque: wt(VO, 'toque,'), tela: wt(VO, 'tela,'), detalhe: wt(VO, 'detalhe?'),
+    cada1: wt(VO, 'cada', { n: 0 }), cada2: wt(VO, 'cada', { n: 1 }), cada3: wt(VO, 'cada', { n: 2 }),
     s4: a(3), telas: wt(VO, 'Telas'), toques: wt(VO, 'Toques'), ritmo: wt(VO, 'ritmo'), voz: wt(VO, 'voz.'),
     s5: a(4), texto: wt(VO, 'texto?'), inteiro: wt(VO, 'inteiro'), ajusta: wt(VO, 'ajusta'),
     s6: a(5), cor: wt(VO, 'cor,'), voz2: wt(VO, 'voz,', { after: F(5) }), idioma: wt(VO, 'idioma.'),
@@ -269,9 +270,10 @@ function cena3(ctx, t, IMG) {
   fundo(ctx, t);
   manchete(ctx, t, T.s3 + 0.02, [[{ w: 'E se ele mostrasse', c: C.texto2 }]], { y: 250, size: 58, weight: 600 });
   // a palavra da vez troca no tempo da fala: toque → tela → detalhe
-  const itens = [['toque', T.toque, T.tela], ['tela', T.tela, T.detalhe], ['detalhe?', T.detalhe, 1e9]];
-  for (const [txt, t0, t1] of itens) {
-    if (t >= t0 - 0.05 && t < t1 + 0.1) manchete(ctx, t, t0 - 0.05, [['cada', { w: txt, c: 'grad' }]], { y: 390, size: 112, sai: t1 + 0.08, tempos: [t0 - 0.12, t0 - 0.03] });
+  // cada troca começa no "cada" falado; a palavra destacada entra na própria palavra
+  const itens = [['toque', T.cada1, T.toque, T.cada2], ['tela', T.cada2, T.tela, T.cada3], ['detalhe?', T.cada3, T.detalhe, 1e9]];
+  for (const [txt, tc, tw, prox] of itens) {
+    if (t >= tc - 0.05 && t < prox) manchete(ctx, t, tc, [['cada', { w: txt, c: 'grad' }]], { y: 390, size: 112, sai: prox - 0.02, tempos: [tc - 0.03, tw - 0.03] });
   }
   const g = geo(540, 1230, 540);
   const card = TELAS.lista?.alvo ? mapa(g, TELAS.lista.alvo) : [g.cx - 200, g.cy, 400, 200];
