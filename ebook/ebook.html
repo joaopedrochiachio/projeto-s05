@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <title>Reels em Código — o método</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 @page { size: A4; margin: 0; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --noite: #0b0b14; --noite2: #161629; --roxo: #7c5cff; --rosa: #ff3d81; --lima: #c6ff3d;
-  --texto: #14141f; --texto2: #4a4a5e; --mudo: #8a8aa0; --borda: #e6e6ef; --fundo: #f7f7fb;
+  --noite: #000000; --noite2: #111113; --roxo: #0071e3; --rosa: #ff375f; --lima: #2997ff;
+  --texto: #1d1d1f; --texto2: #515154; --mudo: #86868b; --borda: #d2d2d7; --fundo: #f5f5f7;
+  --grad: linear-gradient(90deg, #0894ff, #c959dd 40%, #ff2e54 70%, #ff9004);
 }
 html, body { font-family: Inter, sans-serif; color: var(--texto); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .pg { width: 210mm; height: 297mm; position: relative; overflow: hidden; page-break-after: always; padding: 20mm 18mm 22mm; background: #fff; }
 .pg:last-child { page-break-after: auto; }
-.escura { background: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1.2px) 0 0/5mm 5mm, linear-gradient(160deg, var(--noite) 0%, var(--noite2) 100%); color: #fff; }
+.escura { background: #000; color: #fff; }
 .rodape { position: absolute; left: 18mm; right: 18mm; bottom: 10mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--mudo); letter-spacing: .04em; }
 .escura .rodape { color: rgba(255,255,255,.45); }
 .rodape b { color: var(--roxo); font-weight: 800; }
 
-.etapa { display: inline-block; font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--roxo); background: rgba(124,92,255,.1); padding: 1.6mm 3.4mm; border-radius: 99px; }
-h1 { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: 34pt; line-height: 1.02; letter-spacing: .005em; margin: 4mm 0 3mm; text-transform: uppercase; }
-h1 em { font-style: normal; color: var(--roxo); }
-.escura h1 em { color: var(--lima); }
+.etapa { display: inline-block; font-size: 8.5pt; font-weight: 700; letter-spacing: .02em; color: var(--roxo); padding: 0; }
+h1 { font-weight: 800; font-size: 31pt; line-height: 1.05; letter-spacing: -.035em; margin: 2mm 0 4mm; }
+h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lead { font-size: 11.5pt; line-height: 1.5; color: var(--texto2); max-width: 160mm; }
 .escura .lead { color: rgba(255,255,255,.75); }
 h3 { font-size: 11.5pt; font-weight: 800; margin: 7mm 0 2.5mm; }
@@ -33,59 +33,59 @@ ul.lista li::before { content: ''; position: absolute; left: 0; top: 1.9mm; widt
 b, strong { color: var(--texto); font-weight: 700; }
 .escura b { color: #fff; }
 code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.4pt; }
-code { background: #f1f0fa; color: #4b32d6; padding: .3mm 1.4mm; border-radius: 1.2mm; }
-pre { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.2pt; line-height: 1.55; background: var(--noite); color: #e8e8f5; padding: 4.5mm 5mm; border-radius: 3.5mm; white-space: pre-wrap; margin-top: 2.5mm; }
-pre .c { color: #8a8aa0; } pre .s { color: var(--lima); } pre .k { color: #ff8fb8; }
+code { background: #f0f0f3; color: #0058b0; padding: .3mm 1.4mm; border-radius: 1.2mm; }
+pre { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.2pt; line-height: 1.55; background: #1d1d1f; color: #f5f5f7; padding: 4.5mm 5mm; border-radius: 3.5mm; white-space: pre-wrap; margin-top: 2.5mm; }
+pre .c { color: #86868b; } pre .s { color: #64d2ff; } pre .k { color: #ff7ab2; }
 
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
 .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
-.card { border: .3mm solid var(--borda); border-radius: 4mm; padding: 5mm; background: #fff; }
+.card { border-radius: 5mm; padding: 5mm; background: var(--fundo); }
 .card h4 { font-size: 10.5pt; font-weight: 800; margin-bottom: 1.5mm; }
 .card p { font-size: 9pt; }
-.dica { border-left: 1.2mm solid var(--lima); background: #f7ffe6; padding: 3.5mm 4.5mm; border-radius: 0 3mm 3mm 0; margin-top: 5mm; }
-.dica.alerta { border-color: var(--rosa); background: #fff0f5; }
-.dica b.t { display: block; font-size: 7.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--texto); margin-bottom: 1mm; }
+.dica { border-left: 1.2mm solid var(--roxo); background: #f0f6ff; padding: 3.5mm 4.5mm; border-radius: 0 3mm 3mm 0; margin-top: 5mm; }
+.dica.alerta { border-color: var(--rosa); background: #fff1f3; }
+.dica b.t { display: block; font-size: 8.5pt; letter-spacing: 0; color: var(--texto); margin-bottom: 1mm; }
 .dica p { font-size: 9.2pt; }
 table { width: 100%; border-collapse: collapse; margin-top: 3mm; }
-th { text-align: left; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--mudo); padding: 2mm 2.5mm; border-bottom: .4mm solid var(--texto); }
+th { text-align: left; font-size: 8pt; font-weight: 700; color: var(--mudo); padding: 2mm 2.5mm; border-bottom: .3mm solid var(--borda); }
 td { font-size: 9pt; color: var(--texto2); padding: 2.4mm 2.5mm; border-bottom: .3mm solid var(--borda); vertical-align: top; line-height: 1.45; }
 td b { color: var(--texto); }
 .num { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; margin-top: 6mm; }
 .num div { border-radius: 4mm; padding: 4.5mm; background: var(--fundo); }
 .escura .num div { background: rgba(255,255,255,.06); border: .3mm solid rgba(255,255,255,.1); }
-.num strong { display: block; font-family: Anton, sans-serif; font-weight: 400; font-size: 26pt; line-height: 1; color: var(--roxo); }
-.escura .num strong { color: var(--lima); }
+.num strong { display: block; font-weight: 800; letter-spacing: -.04em; font-size: 24pt; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .num span { display: block; margin-top: 1.5mm; font-size: 8.2pt; color: var(--mudo); line-height: 1.35; }
 img.fig { width: 100%; border-radius: 3.5mm; display: block; }
 .legenda { font-size: 7.8pt; color: var(--mudo); margin-top: 1.8mm; }
 .passos { counter-reset: p; display: grid; gap: 3mm; margin-top: 3mm; }
 .passos > div { counter-increment: p; position: relative; padding-left: 11mm; }
-.passos > div::before { content: counter(p); position: absolute; left: 0; top: 0; width: 7.5mm; height: 7.5mm; border-radius: 50%; background: var(--texto); color: #fff; font-size: 8.5pt; font-weight: 800; display: grid; place-items: center; }
+.passos > div::before { content: counter(p); position: absolute; left: 0; top: 0; width: 7.5mm; height: 7.5mm; border-radius: 50%; background: var(--roxo); color: #fff; font-size: 8.5pt; font-weight: 800; display: grid; place-items: center; }
 .passos h4 { font-size: 10pt; font-weight: 800; }
 .passos p { font-size: 9.2pt; }
 
 /* capa */
 .capa { padding: 0; }
 .capa .topo { padding: 20mm 18mm 0; }
-.capa .selo { display: inline-block; font-size: 8pt; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; padding: 2mm 4mm; border-radius: 99px; border: .3mm solid rgba(255,255,255,.25); color: rgba(255,255,255,.8); }
-.capa h1 { font-size: 64pt; line-height: .95; margin-top: 14mm; }
+.capa { background: #fbfbfd; color: var(--texto); }
+.capa .selo { display: inline-block; font-size: 9pt; font-weight: 600; color: var(--mudo); }
+.capa h1 { font-size: 66pt; line-height: .98; letter-spacing: -.045em; margin-top: 16mm; }
 .capa .lead { font-size: 13pt; margin-top: 6mm; max-width: 140mm; }
 .capa .faixa { position: absolute; left: 0; right: 0; bottom: 46mm; padding: 0 12mm; }
-.capa .faixa img { width: 100%; border-radius: 3mm; box-shadow: 0 8mm 20mm rgba(0,0,0,.5); }
-.capa .autor { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; display: flex; justify-content: space-between; align-items: flex-end; font-size: 9pt; color: rgba(255,255,255,.65); }
-.capa .autor b { display: block; font-size: 12pt; color: #fff; margin-bottom: 1mm; }
-.brilho { position: absolute; width: 140mm; height: 140mm; border-radius: 50%; filter: blur(30mm); opacity: .55; }
+.capa .faixa img { width: 100%; border-radius: 4mm; box-shadow: 0 8mm 22mm rgba(0,0,0,.12); }
+.capa .autor { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; display: flex; justify-content: space-between; align-items: flex-end; font-size: 9pt; color: var(--mudo); }
+.capa .autor b { display: block; font-size: 12pt; color: var(--texto); margin-bottom: 1mm; }
+.brilho { position: absolute; width: 140mm; height: 140mm; border-radius: 50%; filter: blur(34mm); opacity: .18; }
 .oferta { border-radius: 5mm; padding: 6mm; color: #fff; }
-.oferta h4 { font-family: Anton, sans-serif; font-weight: 400; font-size: 20pt; text-transform: uppercase; }
+.oferta h4 { font-weight: 800; letter-spacing: -.03em; font-size: 19pt; }
 .oferta p { color: rgba(255,255,255,.85); font-size: 9.5pt; margin-top: 2mm; }
 .check { list-style: none; display: grid; gap: 2mm; columns: 2; }
 .check li { padding-left: 7mm; position: relative; font-size: 9.2pt; break-inside: avoid; }
-.check li::before { content: ''; position: absolute; left: 0; top: .8mm; width: 3.6mm; height: 3.6mm; border-radius: 1mm; border: .4mm solid var(--roxo); }
+.check li::before { content: ''; position: absolute; left: 0; top: .8mm; width: 3.6mm; height: 3.6mm; border-radius: 50%; border: .4mm solid var(--lima); }
 .erro { display: grid; grid-template-columns: 8mm 1fr; gap: 3mm; padding: 2.6mm 0; border-bottom: .3mm solid var(--borda); }
-.erro i { font-style: normal; font-family: Anton, sans-serif; font-size: 15pt; color: var(--rosa); line-height: 1; }
+.erro i { font-style: normal; font-weight: 800; letter-spacing: -.03em; font-size: 14pt; color: var(--rosa); line-height: 1; }
 .erro h4 { font-size: 9.6pt; font-weight: 800; }
 .erro p { font-size: 8.8pt; line-height: 1.45; }
-.prompt { border: .3mm solid var(--borda); border-radius: 3.5mm; padding: 3.5mm 4.5mm; margin-top: 3mm; }
+.prompt { background: var(--fundo); border-radius: 4mm; padding: 3.5mm 4.5mm; margin-top: 3mm; }
 .prompt h4 { font-size: 9pt; font-weight: 800; color: var(--roxo); letter-spacing: .02em; }
 .prompt p { font-family: 'JetBrains Mono', monospace; font-size: 7.9pt; line-height: 1.55; color: var(--texto); margin-top: 1.5mm; }
 </style>
@@ -93,13 +93,13 @@ img.fig { width: 100%; border-radius: 3.5mm; display: block; }
 <body>
 
 <!-- 1. CAPA -->
-<section class="pg escura capa">
-  <div class="brilho" style="background:#7c5cff;left:-40mm;top:-30mm"></div>
-  <div class="brilho" style="background:#ff3d81;right:-50mm;top:70mm;opacity:.35"></div>
+<section class="pg capa">
+  <div class="brilho" style="background:#0894ff;left:-40mm;top:-30mm"></div>
+  <div class="brilho" style="background:#ff2e54;right:-50mm;top:70mm"></div>
   <div class="topo" style="position:relative">
     <span class="selo">Guia prático · Edição 1 · 2026</span>
-    <h1>Reels<br>em <em>Código</em></h1>
-    <p class="lead">O método para criar vídeos de produto <b>programados</b>: prints reais, voz com IA, cada cena entrando na palavra falada, trilha própria e entrega em 60 fps — sem abrir um editor de vídeo.</p>
+    <h1>Reels<br>em <em>Código.</em></h1>
+    <p class="lead">Vídeos de produto com <b>telas reais e toques reais, no ritmo da voz</b>. Que se ajustam sozinhos quando o texto muda, ganham versões em outra cor, voz ou idioma, viram página interativa — e saem em poucas horas.</p>
   </div>
   <div class="faixa"><img src="assets/faixa-reel.jpg" alt="Quadros do Reel"></div>
   <div class="autor">
@@ -239,7 +239,7 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
   <p class="lead">O roteiro decide 80% do resultado. Escreva para quem está rolando o feed com o polegar: decide em um segundo e meio se fica.</p>
   <div class="grid2" style="margin-top:5mm">
     <div class="card"><h4>Reel de venda · 30 a 35 s</h4>
-      <p><b>Gancho</b> (0–3 s) → <b>dor</b> → <b>virada</b> com boom → <b>como funciona</b> → <b>prova</b> (case real) → <b>oferta</b> → <b>CTA</b> com um verbo e um canal.</p></div>
+      <p><b>Gancho</b> que o público reconhece → <b>dor com humor</b> → <b>desejo</b> → <b>impacto</b> (cena keynote) → <b>diferenciais</b> → <b>prova</b> → <b>CTA</b> com um verbo e um canal.</p></div>
     <div class="card"><h4>Demo de produto · 45 a 55 s</h4>
       <p><b>Problema</b> → <b>virada</b> (nome do produto) → <b>uma cena por etapa da tarefa</b> do usuário → <b>feedback</b> visível → <b>chamada final</b>.</p></div>
   </div>
@@ -252,11 +252,11 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
   </table>
   <h3>O formato que o código lê</h3>
 <pre>{ <span class="s">"falas"</span>: [
-    <span class="s">"Já se imaginou fazendo vídeos assim?"</span>,
-    <span class="s">"Sem editor. Sem After Effects. Sem arrastar clipe por clipe."</span>,
-    <span class="s">"Esse vídeo não foi editado. Ele foi programado."</span>,
+    <span class="s">"Seu aplicativo é incrível."</span>,
+    <span class="s">"O vídeo dele, nem tanto."</span>,
+    <span class="s">"Telas reais. Toques reais. No ritmo da sua voz."</span>,
     <span class="s">"Me chama no direct."</span> ] }</pre>
-  <div class="dica"><b class="t">Truque de gancho</b><p>Texto na tela <b>no primeiro quadro</b>, nunca tela vazia. No Reel deste guia, "JÁ SE" já está no quadro zero e o resto da frase cai palavra por palavra junto com a voz.</p></div>
+  <div class="dica"><b class="t">Truque de gancho</b><p>Texto na tela <b>no primeiro quadro</b>, nunca tela vazia. No Reel deste guia, "Seu aplicativo" já está no quadro zero e "incrível" entra com brilho exatamente quando a voz diz a palavra.</p></div>
   <div class="dica alerta"><b class="t">Feche antes de gravar</b><p>Uma palavra trocada depois exige voz nova. Feche o roteiro com o cliente <b>antes</b> de gerar a narração.</p></div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>6</span></div>
 </section>
@@ -269,9 +269,9 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
   <table>
     <tr><th>Parâmetro</th><th>Demo de produto</th><th>Reel de venda</th></tr>
     <tr><td><b>Modelo</b></td><td>Eleven v3 ou Multilingual v2</td><td>Eleven v3</td></tr>
-    <tr><td><b>Voz</b></td><td>Pronta da biblioteca, pt-BR, jovem e confiante</td><td>Narradora de "hook" viral, energia alta</td></tr>
-    <tr><td><b>Stability</b></td><td>0,50</td><td>0,40 a 0,50</td></tr>
-    <tr><td><b>Style</b></td><td>0,15 a 0,25</td><td>0,30 a 0,45</td></tr>
+    <tr><td><b>Voz</b></td><td>Pronta da biblioteca, pt-BR, jovem e confiante</td><td>Madura e calma, estilo anúncio da Apple</td></tr>
+    <tr><td><b>Stability</b></td><td>0,50</td><td>0,55 a 0,65</td></tr>
+    <tr><td><b>Style</b></td><td>0,15 a 0,25</td><td>0,10 a 0,20</td></tr>
     <tr><td><b>Formato</b></td><td colspan="2">MP3 44,1 kHz, 128 kbps (192 kbps só em plano pago)</td></tr>
   </table>
   <div class="grid2" style="margin-top:7mm">
@@ -280,16 +280,16 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
       <ul class="lista">
         <li>Números <b>por extenso</b>.</li>
         <li>Siglas como palavra: <code>Nesp</code>, não <code>N.E.S.P.</code></li>
-        <li>Grafia fonética só se a voz errar: <code>Áfter Efécts</code>, <code>diréct</code>.</li>
+        <li>Grafia fonética só se a voz errar: <code>Nésp</code>, <code>diréct</code>.</li>
         <li>Quebras de linha entre frases: viram pausas que ajudam a sincronia.</li>
       </ul>
     </div>
     <div>
       <h3 style="margin-top:0">Marcações (Eleven v3)</h3>
       <p>Use pouco, só onde a tomada sem marcação ficou monótona:</p>
-<pre>[excited] Já se imaginou fazendo vídeos assim?
-Esse vídeo não foi editado...
-[confident] Ele foi programado.</pre>
+<pre>[calm] Seu aplicativo é incrível.
+[playful] O vídeo dele, nem tanto.
+[confident] Telas reais. Toques reais.</pre>
     </div>
   </div>
   <div class="dica"><b class="t">Por que voz pronta</b><p>Vozes da biblioteca soam melhor em português do que clones caseiros. No case, a voz "Marcio – Viral Hook Narrator" entregou 50 segundos limpos na primeira tomada.</p></div>
@@ -307,9 +307,9 @@ Esse vídeo não foi editado...
     <div><h4>Whisper, se você tiver</h4><p>Com o Whisper instalado, o mesmo script usa o tempo de cada palavra reconhecida. Sem ele — ou com a rede bloqueando o modelo, como aconteceu comigo — as pausas dão conta.</p></div>
   </div>
 <pre><span class="c"># no filme, a cena começa na palavra, não num segundo fixo</span>
-<span class="k">const</span> tProgramado = wt(VO, <span class="s">'programado.'</span>);
-<span class="k">const</span> tCTA        = ph(VO, -1).t0;          <span class="c">// início da última frase</span>
-HITS.push([tProgramado, <span class="s">'boom'</span>]);           <span class="c">// o efeito sonoro vai junto</span></pre>
+<span class="k">const</span> tIncrivel = wt(VO, <span class="s">'incrível.'</span>);
+<span class="k">const</span> tCTA      = ph(VO, -1).t0;            <span class="c">// início da última frase</span>
+HITS.push([tIncrivel, <span class="s">'punch'</span>]);          <span class="c">// o efeito sonoro vai junto</span></pre>
   <div class="num" style="grid-template-columns:repeat(3,1fr)">
     <div><strong>12/12</strong><span>frases do case encaixadas em pausas reais</span></div>
     <div><strong>6 ms</strong><span>erro máximo de início de frase no teste com tempos conhecidos</span></div>
@@ -328,17 +328,17 @@ HITS.push([tProgramado, <span class="s">'boom'</span>]);           <span class="
     <tr><th>Técnica</th><th>O que faz</th><th>Onde usar</th></tr>
     <tr><td><b>Molas</b></td><td>Todo movimento entra com peso, passa um pouco e assenta. Nada de movimento linear.</td><td>Sempre</td></tr>
     <tr><td><b>Título com desfoque</b></td><td>Cada palavra entra desfocada e subindo, com 60 ms de atraso entre elas.</td><td>Demo, tom institucional</td></tr>
-    <tr><td><b>Slam</b></td><td>A palavra cai grande e assenta com mola. A linguagem nativa de Reels.</td><td>Reel de venda</td></tr>
+    <tr><td><b>Manchete batendo</b></td><td>Cada palavra entra com punch de mola (de 122% para 100%), de desfocada a nítida, na hora exata em que é falada.</td><td>Reel de venda</td></tr>
     <tr><td><b>Celular com tela real</b></td><td>O print dentro de um aparelho, com status bar e reflexo de vidro.</td><td>Toda prova de produto</td></tr>
     <tr><td><b>Fragmentos</b></td><td>Recortes reais da tela (card, botão) saem do celular e flutuam à frente.</td><td>Destacar uma função</td></tr>
     <tr><td><b>Dedo e toque</b></td><td>Um dedo anda até o botão, toca e um anel se expande.</td><td>Mostrar uso real</td></tr>
-    <tr><td><b>Drops e boom</b></td><td>Emoji que salta, tremor de câmera, flash e corte de música no impacto.</td><td>Viradas do Reel</td></tr>
-    <tr><td><b>Legenda queimada</b></td><td>A frase falada com a palavra atual em destaque, dentro da área segura.</td><td>Todo Reel</td></tr>
+    <tr><td><b>Brilho de impacto</b></td><td>Contorno em gradiente que gira ao redor do celular ou do cartão no instante do impacto.</td><td>Viradas do Reel</td></tr>
+    <tr><td><b>Cena keynote</b></td><td>Fundo preto, frases curtas empilhadas e uma linha de voz viva.</td><td>O momento de impacto</td></tr>
   </table>
   <div class="grid3" style="margin-top:6mm">
-    <div><img class="fig" src="assets/reel_276.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Slam + risco: "EDITADO" um instante antes do boom.</p></div>
-    <div><img class="fig" src="assets/reel_632.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Contador de 60 fps e drop 🔥.</p></div>
-    <div><img class="fig" src="assets/reel_960.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">CTA: tela de direct com toque.</p></div>
+    <div><img class="fig" src="assets/reel_327.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Cena keynote: "Telas reais. Toques reais."</p></div>
+    <div><img class="fig" src="assets/reel_498.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">Variações: cor, voz e idioma.</p></div>
+    <div><img class="fig" src="assets/reel_807.jpg" style="height:57mm;object-fit:cover;object-position:top"><p class="legenda">CTA: direct em modo claro, com toque.</p></div>
   </div>
   <div class="dica alerta"><b class="t">Contrato do render</b><p>Sem <code>Math.random</code>, sem timers, sem estado entre quadros: tudo calculado a partir de <code>t</code>. O renderizador pede quadros fora de ordem e o resultado precisa ser idêntico.</p></div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>9</span></div>
@@ -353,21 +353,20 @@ HITS.push([tProgramado, <span class="s">'boom'</span>]);           <span class="
     <div>
       <h3 style="margin-top:0">A trilha</h3>
       <ul class="lista">
-        <li><b>120 BPM</b>: bumbo, palmas, chimbal, baixo e arpejo sobre Lá menor · Fá · Dó · Sol.</li>
+        <li><b>120 BPM limpo</b>: bumbo suave, estalo, baixo redondo, pluck e pad sobre Lá menor · Fá · Dó · Sol.</li>
         <li><b>Gancho filtrado</b> que abre até o primeiro corte.</li>
-        <li><b>Silêncio de 0,3 s antes de cada boom</b>: o impacto parece maior.</li>
+        <li><b>Respiro curto antes de cada impacto</b>: a música abaixa por 0,2 s e o punch parece maior.</li>
         <li><b>Ducking</b>: a trilha abaixa sozinha quando a voz fala.</li>
       </ul>
     </div>
     <div>
       <h3 style="margin-top:0">Os efeitos</h3>
       <table style="margin-top:0">
-        <tr><td><b>boom</b></td><td>virada, 60 fps, envio da mensagem</td></tr>
+        <tr><td><b>punch</b></td><td>impacto grave com brilho: "incrível", "Telas reais", "horas"</td></tr>
+        <tr><td><b>tap</b></td><td>cada toque na tela</td></tr>
         <tr><td><b>whoosh</b></td><td>troca de cena forte</td></tr>
-        <tr><td><b>pop</b></td><td>adesivo, emoji, cartão</td></tr>
-        <tr><td><b>tick</b></td><td>cada palavra na cena "palavra"</td></tr>
-        <tr><td><b>teclado</b></td><td>roteiro sendo digitado</td></tr>
-        <tr><td><b>ding</b></td><td>"pronto pra postar"</td></tr>
+        <tr><td><b>pop</b></td><td>cartões e variações entrando</td></tr>
+        <tr><td><b>teclado</b></td><td>roteiro sendo editado</td></tr>
       </table>
     </div>
   </div>
@@ -375,7 +374,7 @@ HITS.push([tProgramado, <span class="s">'boom'</span>]);           <span class="
 node tools/hits.mjs http://localhost:8091/index.html   <span class="c"># → hits.json</span>
 python3 tools/trilha.py                               <span class="c"># → audio/mix.mp3 em −14 LUFS</span></pre>
   <div class="dica"><b class="t">Volume certo para as redes</b><p>Meça e ajuste em <b>duas passadas</b> (loudnorm do ffmpeg): −14 LUFS e pico de −1 dBTP. Uma passada só costuma ficar 1 a 2 dB abaixo.</p></div>
-  <div class="dica alerta"><b class="t">Efeito em todo corte vira barulho</b><p>Reserve o boom para as viradas e o CTA. Nos outros cortes, um pop leve ou nada.</p></div>
+  <div class="dica alerta"><b class="t">Efeito em todo corte vira barulho</b><p>Reserve o impacto para as viradas e o CTA. Nos outros cortes, um pop leve ou nada.</p></div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>10</span></div>
 </section>
 
@@ -459,7 +458,7 @@ python3 tools/trilha.py                               <span class="c"># → audi
   <p class="lead">Cole no Claude Code, na pasta do projeto, um de cada vez. Troque o que está entre colchetes.</p>
   <div class="prompt"><h4>1 · Prints reais</h4><p>Rode a build de produção do app e escreva tools/capturar.mjs com Playwright (390×844, escala 3). Faça login como [persona], percorra [fluxo] e salve um JPG por tela em app/, mais app/telas.json com a posição de [elementos]. Espere os toasts sumirem antes de cada print.</p></div>
   <div class="prompt"><h4>2 · Roteiro</h4><p>Escreva roteiro.json para um [Reel de venda de 30 s | demo de 50 s] de [produto] para [público]. Estrutura: gancho, dor, virada, como funciona, prova, CTA para [canal]. Frases de 4 a 9 palavras, números por extenso, uma ideia por cena.</p></div>
-  <div class="prompt"><h4>3 · Filme</h4><p>Crie film.js e player.js: canvas 1080×1920, desenhar(ctx, t) puro, cenas presas às palavras do vo.json com wt(). Use molas, [slam e drops de emoji | títulos com desfoque], celular com os prints reais e legenda queimada na área segura. Exporte HITS com os efeitos de cada cena.</p></div>
+  <div class="prompt"><h4>3 · Filme</h4><p>Crie film.js e player.js: canvas 1080×1920, desenhar(ctx, t) puro, cenas presas às palavras do vo.json com wt(). Use molas, [manchetes batendo com brilho de impacto | títulos com desfoque], celular com os prints reais e conteúdo dentro da área segura. Exporte HITS com os efeitos de cada cena.</p></div>
   <div class="prompt"><h4>4 · Crítica</h4><p>Gere uma folha de contato com um quadro por cena. Dê nota de 1 a 10 para gancho, leitura no celular, movimento, variedade e área segura. Corrija os três piores pontos e repita até tudo passar de 8.</p></div>
   <div class="prompt"><h4>5 · Voz e sincronia</h4><p>Aqui está a narração: [arquivo.mp3]. Rode tools/sincronizar.py, confira se cada frase caiu numa pausa real, gere a trilha com ducking e renderize o MP4 final em 60 fps a −14 LUFS.</p></div>
   <div class="prompt"><h4>6 · Publicação</h4><p>Publique o projeto no GitHub Pages com um workflow de Actions (export estático, basePath do repositório, a página interativa em /demo). Teste o fluxo inteiro sob o caminho do repositório e o áudio no celular antes do merge.</p></div>
@@ -468,8 +467,8 @@ python3 tools/trilha.py                               <span class="c"># → audi
 
 <!-- 15. CHECKLIST + OFERTA -->
 <section class="pg escura">
-  <div class="brilho" style="background:#7c5cff;right:-50mm;top:-40mm;opacity:.4"></div>
-  <span class="etapa" style="background:rgba(198,255,61,.12);color:var(--lima)">Para fechar</span>
+  <div class="brilho" style="background:#c959dd;right:-50mm;top:-40mm;opacity:.35"></div>
+  <span class="etapa" style="color:var(--lima)">Para fechar</span>
   <h1>Checklist de <em>entrega</em></h1>
   <ul class="check" style="margin-top:5mm">
     <li style="color:rgba(255,255,255,.85)">Texto na tela no primeiro quadro</li>
@@ -477,17 +476,17 @@ python3 tools/trilha.py                               <span class="c"># → audi
     <li style="color:rgba(255,255,255,.85)">Roteiro aprovado antes da voz</li>
     <li style="color:rgba(255,255,255,.85)">Cada frase sincronizada numa pausa real</li>
     <li style="color:rgba(255,255,255,.85)">Legenda e CTA na área segura</li>
-    <li style="color:rgba(255,255,255,.85)">Boom só nas viradas e no CTA</li>
+    <li style="color:rgba(255,255,255,.85)">Impacto só nas viradas e no CTA</li>
     <li style="color:rgba(255,255,255,.85)">1080×1920, 60 fps, −14 LUFS</li>
     <li style="color:rgba(255,255,255,.85)">Áudio testado no celular</li>
   </ul>
 
   <h1 style="margin-top:12mm; font-size:30pt">Quer pular para o <em>resultado</em>?</h1>
   <div class="grid2" style="margin-top:4mm">
-    <div class="oferta" style="background:linear-gradient(140deg,#c6ff3d,#7ee05b);color:#0b0b14"><h4>🎬 Faço pra você</h4><p style="color:#1d2a10">Vídeo do seu produto com prints reais, voz, trilha e página interativa. Você aprova o roteiro, eu entrego pronto pra postar.</p></div>
-    <div class="oferta" style="background:linear-gradient(140deg,#ff3d81,#7c5cff)"><h4>📘 Te ensino</h4><p>Acompanhamento para montar o seu primeiro vídeo com este método, do briefing à publicação.</p></div>
+    <div class="oferta" style="background:#fff;color:#1d1d1f"><h4>Faço pra você</h4><p style="color:#515154">Vídeo do seu produto com prints reais, voz, trilha e página interativa. Você aprova o roteiro, eu entrego pronto pra postar.</p></div>
+    <div class="oferta" style="background:linear-gradient(135deg,#0894ff,#c959dd 55%,#ff2e54)"><h4>Te ensino</h4><p>Acompanhamento para montar o seu primeiro vídeo com este método, do briefing à publicação.</p></div>
   </div>
-  <p class="lead" style="margin-top:7mm; font-size:14pt"><b style="color:var(--lima)">Me chama no direct</b> ou comenta <b>"VÍDEO"</b> no Reel.</p>
+  <p class="lead" style="margin-top:7mm; font-size:14pt"><b style="color:var(--lima)">Me chama no direct</b> ou comente <b>"VÍDEO"</b> no Reel.</p>
 
   <div style="position:absolute; left:18mm; right:18mm; bottom:22mm; font-size:7.6pt; line-height:1.55; color:rgba(255,255,255,.5)">
     <b style="color:rgba(255,255,255,.75)">Créditos.</b> Motor de animação derivado do motion-reel (Aries Spring) e da Fábrica de Criativos (Filipe Molinari), licença MIT.

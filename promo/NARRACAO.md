@@ -1,61 +1,62 @@
 # Narração — Reel "Reels em Código"
 
 Cole o bloco inteiro de uma vez na ElevenLabs. **Não troque nenhuma palavra**: as cenas e os efeitos
-(boom, pop, whoosh) estão presos a elas. Se quiser mudar o texto, me avise que eu ajusto o roteiro junto.
+(impactos, toques, whoosh) estão presos a elas. Se quiser mudar o texto, me avise que eu ajusto o roteiro junto.
 
 ## Texto (copie daqui)
 
 ```
-Já se imaginou fazendo vídeos assim?
-Sem editor. Sem After Effects. Sem arrastar clipe por clipe.
-Esse vídeo não foi editado. Ele foi programado.
-Você escreve o roteiro, a inteligência artificial narra,
-e cada cena entra exatamente na palavra falada.
-Print real do aplicativo, animação, legenda e trilha.
-Sessenta quadros por segundo, pronto pra postar.
-Eu fiz esse aqui em poucas horas, do zero.
-Quer um vídeo assim pro seu produto, ou aprender a fazer o seu?
+Seu aplicativo é incrível.
+O vídeo dele, nem tanto.
+E se ele mostrasse cada toque, cada tela, cada detalhe?
+Telas reais. Toques reais. No ritmo da sua voz.
+Mudou o texto? O vídeo inteiro se ajusta sozinho.
+Outra cor, outra voz, outro idioma.
+E o mesmo vídeo vira uma página que o cliente pode tocar.
+Do roteiro ao post, em poucas horas.
+Quer um assim pro seu produto?
 Me chama no direct.
 ```
 
-81 palavras, entre 28 e 35 segundos.
+72 palavras, entre 26 e 32 segundos.
 
 ## Tom
 
-Reel de venda: **energético, confiante, próximo**, como quem conta uma novidade para um amigo.
-Ritmo rápido no começo, pausa curta antes de "Ele foi programado" (é o boom) e fechamento firme em
-"Me chama no direct".
+Estilo **anúncio da Apple**: calmo, seguro, frases curtas com pausa entre elas. Nada de gritar.
+Um sorriso leve em "nem tanto" e firmeza em "Telas reais. Toques reais." — é o momento de impacto.
+Deixe uma pausa clara entre as frases: o vídeo usa essas pausas para sincronizar.
 
-A voz que você já usou (**Marcio – Viral Hook Narrator**) combina com esse estilo.
+Vozes que combinam: uma voz masculina ou feminina **madura e calma** da biblioteca em pt-BR
+(evite as vozes de "hook viral", que soam agitadas para esse estilo).
 
 | Parâmetro | Valor |
 |---|---|
 | Modelo | Eleven v3 (ou Multilingual v2) |
-| Stability | 0,40 a 0,50 (um pouco mais de variação que no vídeo do NESP) |
+| Stability | 0,55 a 0,65 (leitura mais estável e elegante) |
 | Similarity | 0,75 |
-| Style | 0,30 a 0,45 |
+| Style | 0,10 a 0,20 |
+| Velocidade | 0,95 a 1,0 |
 | Formato | MP3 44,1 kHz 128 kbps |
 
 ### Versão com marcações (Eleven v3, opcional)
 
 ```
-[excited] Já se imaginou fazendo vídeos assim?
-Sem editor. Sem After Effects. Sem arrastar clipe por clipe.
-Esse vídeo não foi editado... [confident] Ele foi programado.
-Você escreve o roteiro, a inteligência artificial narra,
-e cada cena entra exatamente na palavra falada.
-Print real do aplicativo, animação, legenda e trilha.
-[excited] Sessenta quadros por segundo, pronto pra postar.
-Eu fiz esse aqui em poucas horas, do zero.
-Quer um vídeo assim pro seu produto, ou aprender a fazer o seu?
-[confident] Me chama no direct.
+[calm] Seu aplicativo é incrível.
+[playful] O vídeo dele, nem tanto.
+E se ele mostrasse cada toque, cada tela, cada detalhe?
+[confident] Telas reais. Toques reais. No ritmo da sua voz.
+Mudou o texto? O vídeo inteiro se ajusta sozinho.
+Outra cor, outra voz, outro idioma.
+E o mesmo vídeo vira uma página que o cliente pode tocar.
+Do roteiro ao post, em poucas horas.
+[warm] Quer um assim pro seu produto?
+Me chama no direct.
 ```
 
 ## Pronúncia
 
 | Palavra | Se sair errado, escreva assim | Observação |
 |---|---|---|
-| After Effects | `Áfter Efécts` | nome do programa da Adobe |
 | direct | `diréct` | como se fala no Instagram |
 | pra | `pra` | já está informal de propósito |
 

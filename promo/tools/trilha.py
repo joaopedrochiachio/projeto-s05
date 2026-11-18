@@ -86,6 +86,17 @@ def hat(aberto=False):
     return np.fft.irfft(X, len(n)) * env(len(n), 0.001, 0.06 if aberto else 0.012)
 
 
+def estalo():
+    n = ruido(0.12)
+    return bandpass_fft(n, 2600, 1200) * env(len(n), 0.0008, 0.03) * 1.2
+
+
+def pluck(freq):
+    t = t_axis(0.6)
+    s = np.sin(2 * np.pi * freq * t) + 0.35 * np.sin(2 * np.pi * freq * 2 * t) + 0.12 * np.sin(2 * np.pi * freq * 3 * t)
+    return s * env(len(t), 0.002, 0.18)
+
+
 def nota(freq, d, forma="saw", decai=0.25, detune=0.0):
     t = t_axis(d)
     s = np.zeros_like(t)
@@ -123,6 +134,20 @@ def sfx_pop():
 def sfx_tick():
     t = t_axis(0.05)
     return (np.sin(2 * np.pi * 2400 * t) * 0.5 + hat() [:len(t)] * 0.5) * env(len(t), 0.0005, 0.012) * 0.6
+
+
+def sfx_punch():
+    t = t_axis(1.2)
+    freq = 40 + 90 * np.exp(-t / 0.08)
+    sub = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t / 0.35)
+    ar = lowpass_fft(ruido(1.2), 1800) * env(len(t), 0.002, 0.05) * 0.4
+    brilho = sum(np.sin(2 * np.pi * f0 * t) for f0 in (2093, 2637, 3136)) * env(len(t), 0.004, 0.45) * 0.08
+    return np.tanh(1.6 * (sub + ar)) * 0.9 + brilho
+
+
+def sfx_tap():
+    t = t_axis(0.06)
+    return (np.sin(2 * np.pi * 1700 * t) * 0.6 + bandpass_fft(ruido(0.06), 4000, 1500) * 0.4) * env(len(t), 0.0005, 0.01) * 0.8
 
 
 def sfx_ding():
@@ -165,30 +190,30 @@ def main():
         raiz, triade = acordes[int(tt / compasso) % 4]
         for b in range(4):
             tb = tt + b * BEAT
-            soma(batida, kick(), tb, 0.9)
+            soma(batida, kick(), tb, 0.7)
             if b in (1, 3):
-                soma(batida, clap(), tb, 0.45)
-            soma(batida, hat(), tb, 0.18)
-            soma(batida, hat(aberto=True), tb + BEAT / 2, 0.14)
-            soma(musica, nota(raiz / 2, BEAT * 0.9, "sin", 0.35), tb + BEAT / 2, 0.55)  # baixo no contratempo
-        for k in range(16):  # arpejo em semicolcheias
-            soma(musica, nota(triade[k % 3] * (2 if k % 8 >= 4 else 1), 0.12, "sq", 0.07), tt + k * BEAT / 4, 0.08)
-        for fq in triade:  # pad
-            soma(musica, nota(fq, compasso, "saw", 1.6, detune=0.004), tt, 0.05)
+                soma(batida, estalo(), tb, 0.35)
+            soma(batida, hat(), tb + BEAT / 2, 0.1)
+            soma(musica, nota(raiz / 2, BEAT * 0.9, "sin", 0.4), tb, 0.5)  # baixo redondo no tempo
+        for k in range(8):  # arpejo "pluck" em colcheias, limpo
+            fq = triade[k % 3] * (2 if k % 4 == 3 else 1)
+            soma(musica, pluck(fq), tt + k * BEAT / 2, 0.16)
+        for fq in triade:  # pad aveludado
+            soma(musica, nota(fq, compasso, "saw", 1.8, detune=0.003), tt, 0.035)
         tt += compasso
-    musica = lowpass_fft(musica, 3200)
+    musica = lowpass_fft(musica, 2400)
 
     # dinâmica: gancho filtrado subindo, cortes de silêncio antes de cada boom, fim com fade
     t = np.arange(n) / SR
-    abertura = np.clip(t / max(T["sem"], 0.1), 0, 1)
+    abertura = np.clip(t / max(T.get("s2", T.get("sem", 2.0)), 0.1), 0, 1)
     filtrada = lowpass_fft(batida + musica, 700)
     cheia = batida + musica
     trilha = filtrada * (1 - abertura) + cheia * abertura
-    booms = [h[0] for h in hits if h[1] == "boom"]
+    booms = [h[0] for h in hits if h[1] in ("boom", "punch")]
     gate = np.ones(n)
-    for b in booms:
-        i0, i1 = int((b - 0.32) * SR), int(b * SR)
-        gate[max(0, i0):max(0, i1)] *= 0.08
+    for b in booms:  # respiro curto antes de cada impacto
+        i0, i1 = int((b - 0.18) * SR), int(b * SR)
+        gate[max(0, i0):max(0, i1)] *= 0.3
     trilha *= gate
     trilha *= np.clip((dur + 0.4 - t) / 1.6, 0, 1)
 
@@ -208,13 +233,20 @@ def main():
             soma(efeitos, sfx_tick(), tempo, 0.7)
         elif tipo == "ding":
             soma(efeitos, sfx_ding(), tempo, 0.8)
+        elif tipo == "punch":
+            soma(efeitos, sfx_punch(), tempo, 0.9)
+        elif tipo == "tap":
+            soma(efeitos, sfx_tap(), tempo, 0.7)
+        elif tipo == "riser_suave":
+            soma(efeitos, sfx_riser(0.8) * 0.5, 0, 0.4)
         elif tipo == "riser":
             soma(efeitos, sfx_riser(0.6), tempo - 0.55 if tempo > 0.6 else 0, 0.5)
         elif tipo == "enviar":
             soma(efeitos, sfx_whoosh(0.3, sobe=True), tempo - 0.25, 0.5)
             soma(efeitos, sfx_pop(), tempo, 0.6)
         elif tipo == "teclado":
-            soma(efeitos, sfx_teclado(max(0.3, T["ia"] - 0.15 - tempo)), tempo, 0.55)
+            fim = T.get("inteiro", T.get("ia", tempo + 1.0))
+            soma(efeitos, sfx_teclado(max(0.3, fim - 0.15 - tempo)), tempo, 0.45)
 
     # narração (se existir): ducking da trilha sob a voz
     vo_path = os.path.join(DIR, "audio", "narracao.mp3")

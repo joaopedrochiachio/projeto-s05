@@ -17,10 +17,10 @@ const ICON = {
 if (RENDER) document.body.classList.add('render');
 
 // ------------------------------------------------------------------ carga
-const [VO, roteiro] = await Promise.all([loadVO(), fetch('roteiro.json').then((r) => r.json())]);
-setup(VO, roteiro);
+const [VO, roteiro, telas] = await Promise.all([loadVO(), fetch('roteiro.json').then((r) => r.json()), fetch('assets/telas.json').then((r) => r.json())]);
+setup(VO, roteiro, telas);
 const DUR = VO.dur;
-await Promise.all([...[600, 700, 800, 900].map((w) => document.fonts.load(`${w} 40px Inter`)), document.fonts.load('400 40px Anton'), document.fonts.load('40px "Noto Color Emoji"')].map((p) => p.catch(() => null)));
+await Promise.all([...[600, 700, 800, 900].map((w) => document.fonts.load(`${w} 40px Inter`)), document.fonts.load('40px "Noto Color Emoji"')].map((p) => p.catch(() => null)));
 const IMG = {};
 await Promise.all(Object.entries(IMAGES).map(async ([k, src]) => {
   const im = new Image(); im.src = src;
@@ -160,7 +160,7 @@ linha.addEventListener('pointermove', (e) => {
 });
 linha.addEventListener('pointerup', () => { arrastando = false; if (tocavaAntes) toca(); });
 
-let legendaOn = false; // a legenda já vem queimada no vídeo (padrão Reels)
+let legendaOn = false; // as manchetes já mostram as palavras-chave; legenda completa no botão CC
 const legenda = $('legenda');
 function atualizaLegenda(tt) {
   const fr = VO.frases.find((f) => tt >= f.t0 - 0.15 && tt <= f.t1 + 0.35);
