@@ -103,7 +103,7 @@ img.fig { width: 100%; border-radius: 3.5mm; display: block; }
   </div>
   <div class="faixa"><img src="assets/faixa-reel.jpg" alt="Quadros do Reel"></div>
   <div class="autor">
-    <div><b>João Pedro Chiachio de Paiva</b>Engenharia de Software · Inatel</div>
+    <div><b>João Pedro Chiachio de Paiva</b>Criador do Wallet AI</div>
     <div style="text-align:right">Inclui case real, prompts<br>prontos e checklists</div>
   </div>
 </section>
@@ -114,12 +114,12 @@ img.fig { width: 100%; border-radius: 3.5mm; display: block; }
   <h1>O que você vai <em>conseguir</em></h1>
   <p class="lead">Este guia ensina a transformar um produto digital em um vídeo vertical que parece feito por um estúdio de motion design — e que você consegue refazer, ajustar e variar em minutos, porque ele é código.</p>
   <div class="num">
-    <div><strong>52 s</strong><span>de demonstração narrada, do problema ao resultado</span></div>
+    <div><strong>30 s</strong><span>de Reel narrado, do gancho ao direct</span></div>
     <div><strong>60 fps</strong><span>1080×1920, H.264, áudio em −14 LUFS</span></div>
-    <div><strong>11</strong><span>cenas, cada uma presa a uma palavra da narração</span></div>
+    <div><strong>10</strong><span>cenas, cada uma presa a uma palavra da narração</span></div>
     <div><strong>0</strong><span>editores de vídeo abertos no processo</span></div>
   </div>
-  <p class="legenda">Números do case real deste guia: o vídeo do Mural de Vagas NESP, um app universitário.</p>
+  <p class="legenda">Números do case real deste guia: o Reel de lançamento do Wallet AI, um app de finanças pessoais com IA.</p>
 
   <div class="grid2" style="margin-top:8mm">
     <div>
@@ -164,11 +164,11 @@ img.fig { width: 100%; border-radius: 3.5mm; display: block; }
       <h3 style="margin-top:0">O diferencial que vende</h3>
       <p>O cliente não compra "animação". Compra <b>confiança</b>: ver o produto de verdade funcionando, com ritmo de anúncio. Tela inventada parece mentira; tela real, com toque, transição e resultado, convence.</p>
       <h3>E o bônus que ninguém entrega</h3>
-      <p>Como o vídeo é código, ele também vira uma <b>página interativa</b>: o cliente pausa, pula por capítulos e lê a legenda sincronizada. No case, cada capítulo mostra a etapa da tarefa do usuário e o método do sistema correspondente.</p>
+      <p>Como o vídeo é código, ele também vira uma <b>página interativa</b>: o cliente pausa, pula por cenas e lê a legenda sincronizada. No case do Wallet, a própria página do Reel aparece dentro do vídeo.</p>
     </div>
     <div>
       <img class="fig" src="assets/player.jpg" alt="Player interativo">
-      <p class="legenda">O player interativo do case: capítulos, linha do tempo e atalhos de teclado.</p>
+      <p class="legenda">A página interativa do Reel: cenas, linha do tempo e atalhos de teclado.</p>
     </div>
   </div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>3</span></div>
@@ -213,22 +213,23 @@ meu-video/
       <ul class="lista">
         <li>Produto, público e <b>a dor</b> que resolve.</li>
         <li>O fluxo principal, passo a passo (o "caminho feliz").</li>
-        <li>Uma <b>persona</b> com nome: os prints ficam com dados reais dela.</li>
+        <li>Uma <b>persona de demonstração</b> com nome e números plausíveis: os prints ficam bonitos e sem dados de ninguém.</li>
         <li>Marca: logo, cor de destaque, fonte.</li>
         <li>CTA e canal: direct, WhatsApp, site.</li>
       </ul>
       <h3>Como capturar</h3>
-      <p>Um script do Playwright abre o app num "celular" de 390×844 em escala 3×, faz login com a persona, percorre o fluxo e salva cada tela. Junto, grava a <b>posição de cada elemento</b> (card, botão, chip) para o filme recortar e animar esses pedaços depois.</p>
+      <p>Um script do Playwright abre o app num "celular" de 390×844 em escala 3×, percorre o fluxo e salva cada tela. Junto, grava a <b>posição de cada elemento</b> (uma compra, um cartão de meta) para o filme recortar e animar esses pedaços depois.</p>
     </div>
     <div>
-      <img class="fig" src="assets/home.jpg" alt="Print real" style="width:62%;margin:0 auto;box-shadow:0 6mm 14mm rgba(0,0,0,.18)">
-      <p class="legenda" style="text-align:center">Print real em 1170×2532, com a persona logada.</p>
+      <img class="fig" src="assets/wallet-inicio.jpg" alt="Print real" style="width:62%;margin:0 auto;box-shadow:0 6mm 14mm rgba(0,0,0,.18)">
+      <p class="legenda" style="text-align:center">Tela real do Wallet AI em 1170×2532, com a persona de demonstração.</p>
     </div>
   </div>
 <pre><span class="k">const</span> ctx = <span class="k">await</span> browser.newContext({ viewport: { width: <span class="s">390</span>, height: <span class="s">844</span> }, deviceScaleFactor: <span class="s">3</span> });
-<span class="k">await</span> page.screenshot({ path: <span class="s">'app/mural.jpg'</span> });
-telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span class="s">'article'</span>).first()) }  <span class="c">// posição para recortar</span></pre>
-  <div class="dica alerta"><b class="t">Erro que eu cometi</b><p>Capturar com o servidor de desenvolvimento deixa o selo do framework na tela, e capturar logo após uma ação pega o aviso (toast) por cima. Capture a <b>build de produção</b> e espere os avisos sumirem antes de cada print.</p></div>
+<span class="k">await</span> page.screenshot({ path: <span class="s">'assets/lista.jpg'</span> });
+telas.lista = { alvo: <span class="k">await</span> rect(menor(<span class="s">'iFood'</span>, <span class="s">'68,90'</span>)) }  <span class="c">// a compra que o dedo toca</span></pre>
+  <div class="dica"><b class="t">App com login? Use um fixture</b><p>O Wallet exige Firebase e OpenAI. Em vez de criar conta, renderizei as <b>telas reais</b> com dados de demonstração, no mesmo esquema dos testes e2e do próprio app: os componentes são os de produção, só os dados são simulados.</p></div>
+  <div class="dica alerta"><b class="t">Erro que eu cometi</b><p>Capturar com o servidor de desenvolvimento deixa o selo do framework na tela, e capturar logo após uma ação pega o aviso (toast) por cima. Espere os avisos sumirem antes de cada print.</p></div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>5</span></div>
 </section>
 
@@ -246,7 +247,7 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
   <table style="margin-top:6mm">
     <tr><th>Evite</th><th>Prefira</th></tr>
     <tr><td>"Nossa solução robusta otimiza processos."</td><td><b>"Um toque, e pronto: candidatura enviada."</b></td></tr>
-    <tr><td>"4 vagas", "60fps", "R$ 25 mil" na fala</td><td><b>"quatro vagas", "sessenta quadros", "vinte e cinco mil reais"</b></td></tr>
+    <tr><td>"4 cartões", "60fps", "R$ 25 mil" na fala</td><td><b>"quatro cartões", "sessenta quadros", "vinte e cinco mil reais"</b></td></tr>
     <tr><td>Frases longas com várias vírgulas</td><td><b>4 a 9 palavras, verbo no começo</b></td></tr>
     <tr><td>Três ideias na mesma cena</td><td><b>Uma ideia por cena, algo novo a cada 2–4 s</b></td></tr>
   </table>
@@ -279,8 +280,8 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
       <h3 style="margin-top:0">Escreva como se fala</h3>
       <ul class="lista">
         <li>Números <b>por extenso</b>.</li>
-        <li>Siglas como palavra: <code>Nesp</code>, não <code>N.E.S.P.</code></li>
-        <li>Grafia fonética só se a voz errar: <code>Nésp</code>, <code>diréct</code>.</li>
+        <li>Nomes estrangeiros como se falam: <code>uólet</code>, se a voz errar <code>Wallet</code>.</li>
+        <li>Grafia fonética só se a voz errar: <code>diréct</code>, <code>Cófi</code>.</li>
         <li>Quebras de linha entre frases: viram pausas que ajudam a sincronia.</li>
       </ul>
     </div>
@@ -292,7 +293,7 @@ telas.mural = { card1: <span class="k">await</span> rect(page.locator(<span clas
 [confident] Telas reais. Toques reais.</pre>
     </div>
   </div>
-  <div class="dica"><b class="t">Por que voz pronta</b><p>Vozes da biblioteca soam melhor em português do que clones caseiros. No case, a voz "Marcio – Viral Hook Narrator" entregou 50 segundos limpos na primeira tomada.</p></div>
+  <div class="dica"><b class="t">Por que voz pronta</b><p>Vozes da biblioteca soam melhor em português do que clones caseiros. E o tom vem do estilo: o Reel do Wallet pede leitura calma, de anúncio da Apple — uma voz de "hook viral" soaria agitada demais.</p></div>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>7</span></div>
 </section>
 
@@ -384,7 +385,7 @@ python3 tools/trilha.py                               <span class="c"># → audi
   <h1>Crítica em <em>rodadas</em></h1>
   <p class="lead">Nenhum vídeo sai sem pelo menos duas rodadas de revisão em folhas de contato: um quadro por momento importante, lado a lado.</p>
   <img class="fig" src="assets/contato.jpg" alt="Folha de contato" style="margin-top:5mm;height:112mm;object-fit:cover;object-position:top">
-  <p class="legenda">Folha de contato do case nos tempos reais da narração: cada efeito conferido contra a palavra falada.</p>
+  <p class="legenda">Folha de contato do Reel do Wallet: um quadro a cada 1,6 s, conferido contra a palavra falada.</p>
   <div class="grid2" style="margin-top:5mm">
     <div>
       <h3 style="margin-top:0">O que conferir</h3>
@@ -400,7 +401,7 @@ python3 tools/trilha.py                               <span class="c"># → audi
       <ul class="lista">
         <li>Títulos invisíveis por uma opacidade que virava <code>NaN</code>.</li>
         <li>Cor <code>#fff</code> quebrando a mistura de cores (use <code>#ffffff</code>).</li>
-        <li>"0 vagas" aparecendo antes da palavra "quatro".</li>
+        <li>A variação "outra cor" quase não mudava nada (o app é branco): troquei pelo modo escuro real do app.</li>
         <li>Palavra gigante estourando a largura no impacto.</li>
       </ul>
     </div>
@@ -426,8 +427,8 @@ python3 tools/trilha.py                               <span class="c"># → audi
     <div><h4>Configure o caminho do repositório</h4><p>Num site Next.js: <code>output: 'export'</code>, <code>basePath: '/nome-do-repo'</code> e <code>trailingSlash: true</code>.</p></div>
     <div><h4>Teste o áudio no celular</h4><p>Celulares não carregam áudio antes de um toque. O play precisa chamar <code>audio.play()</code> no próprio clique.</p></div>
   </div>
-  <img class="fig" src="assets/faixa-nesp.jpg" alt="Quadros do case" style="margin-top:6mm">
-  <p class="legenda">Quadros do vídeo final do case, publicado com o app no GitHub Pages.</p>
+  <img class="fig" src="assets/faixa-wallet.jpg" alt="Quadros do case" style="margin-top:6mm">
+  <p class="legenda">Quadros do Reel do Wallet AI, publicado junto com a página interativa no GitHub Pages.</p>
   <div class="rodape"><span><b>Reels em Código</b> · o método</span><span>12</span></div>
 </section>
 
@@ -456,7 +457,7 @@ python3 tools/trilha.py                               <span class="c"># → audi
   <span class="etapa">Atalhos</span>
   <h1>Prompts <em>prontos</em></h1>
   <p class="lead">Cole no Claude Code, na pasta do projeto, um de cada vez. Troque o que está entre colchetes.</p>
-  <div class="prompt"><h4>1 · Prints reais</h4><p>Rode a build de produção do app e escreva tools/capturar.mjs com Playwright (390×844, escala 3). Faça login como [persona], percorra [fluxo] e salve um JPG por tela em app/, mais app/telas.json com a posição de [elementos]. Espere os toasts sumirem antes de cada print.</p></div>
+  <div class="prompt"><h4>1 · Prints reais</h4><p>Rode a build de produção do app e escreva tools/capturar.mjs com Playwright (390×844, escala 3). Se o app exige login, monte um fixture com dados de demonstração da [persona]. Percorra [fluxo] e salve um JPG por tela em assets/, mais assets/telas.json com a posição de [elementos]. Espere os toasts sumirem antes de cada print.</p></div>
   <div class="prompt"><h4>2 · Roteiro</h4><p>Escreva roteiro.json para um [Reel de venda de 30 s | demo de 50 s] de [produto] para [público]. Estrutura: gancho, dor, virada, como funciona, prova, CTA para [canal]. Frases de 4 a 9 palavras, números por extenso, uma ideia por cena.</p></div>
   <div class="prompt"><h4>3 · Filme</h4><p>Crie film.js e player.js: canvas 1080×1920, desenhar(ctx, t) puro, cenas presas às palavras do vo.json com wt(). Use molas, [manchetes batendo com brilho de impacto | títulos com desfoque], celular com os prints reais e conteúdo dentro da área segura. Exporte HITS com os efeitos de cada cena.</p></div>
   <div class="prompt"><h4>4 · Crítica</h4><p>Gere uma folha de contato com um quadro por cena. Dê nota de 1 a 10 para gancho, leitura no celular, movimento, variedade e área segura. Corrija os três piores pontos e repita até tudo passar de 8.</p></div>
@@ -490,7 +491,7 @@ python3 tools/trilha.py                               <span class="c"># → audi
 
   <div style="position:absolute; left:18mm; right:18mm; bottom:22mm; font-size:7.6pt; line-height:1.55; color:rgba(255,255,255,.5)">
     <b style="color:rgba(255,255,255,.75)">Créditos.</b> Motor de animação derivado do motion-reel (Aries Spring) e da Fábrica de Criativos (Filipe Molinari), licença MIT.
-    O método de referência: MOLINARI, Filipe. <i>Fábrica de Criativos</i>, 2026, CC BY 4.0. Este guia é uma obra própria, construída sobre o case Mural de Vagas NESP (Inatel).
+    O método de referência: MOLINARI, Filipe. <i>Fábrica de Criativos</i>, 2026, CC BY 4.0. Este guia é uma obra própria, construída sobre o case do Wallet AI.
   </div>
   <div class="rodape"><span><b style="color:var(--lima)">Reels em Código</b> · João Pedro Chiachio de Paiva</span><span>15</span></div>
 </section>

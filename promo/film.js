@@ -15,7 +15,7 @@ const UI = 'Inter, "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
 const EMOJI = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
 
 export const IMAGES = Object.fromEntries(
-  ['home', 'mural', 'detalhe', 'sucesso', 'player'].map((k) => [k, `assets/${k}.jpg`]),
+  ['inicio', 'inicio_escuro', 'lista', 'detalhe', 'insight', 'player'].map((k) => [k, `assets/${k}.jpg`]),
 );
 
 export let T = {}, CHAPTERS = [], HITS = [], PUNCH = [];
@@ -168,7 +168,7 @@ function celular(ctx, IMG, g, camadas, { a = 1, filtro = null, glow = 0, t = 0 }
   ctx.shadowColor = 'transparent';
   ctx.lineWidth = 3; ctx.strokeStyle = '#8e8e93'; ctx.stroke(); // aro de titânio
   ctx.save(); rrect(ctx, g.x, g.y, g.w, g.sh, R); ctx.clip();
-  ctx.fillStyle = '#126ae2'; ctx.fillRect(g.x, g.y, g.w, g.status + 4);
+  ctx.fillStyle = g.statusCor || '#f2f2f7'; ctx.fillRect(g.x, g.y, g.w, g.status + 4);
   if (filtro) ctx.filter = filtro;
   for (const c of camadas) {
     if (!c || c.a <= 0.003 || !IMG[c.img]) continue;
@@ -179,7 +179,7 @@ function celular(ctx, IMG, g, camadas, { a = 1, filtro = null, glow = 0, t = 0 }
     ctx.restore();
   }
   ctx.filter = 'none'; ctx.globalAlpha = a;
-  ctx.fillStyle = '#fff'; ctx.font = f(g.w * 0.042, 600); ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = g.statusTexto || C.texto; ctx.font = f(g.w * 0.042, 600); ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
   ctx.fillText('9:41', g.x + g.w * 0.1, g.y + g.status * 0.56);
   rrect(ctx, g.cx - g.w * 0.15, g.y + g.w * 0.025, g.w * 0.3, g.w * 0.075, g.w * 0.04); ctx.fillStyle = '#000'; ctx.fill();
   ctx.restore();
@@ -236,7 +236,7 @@ function cena1(ctx, t, IMG) {
   fundo(ctx, t);
   const e = sp(t, 0.05, SPRING.gentle);
   const g = geo(540, lerp(1500, 1230, e), 520);
-  celular(ctx, IMG, g, [{ img: 'home', a: 1 }], { a: clamp(e * 2), glow: punch(t), t });
+  celular(ctx, IMG, g, [{ img: 'inicio', a: 1 }], { a: clamp(e * 2), glow: punch(t), t });
   manchete(ctx, t, 0, [['Seu', 'aplicativo'], ['é', { w: 'incrível.', c: 'grad' }]], { y: 330, size: 112, tempos: [0, 0.08, T.incrivel - 0.25, T.incrivel] });
 }
 
@@ -251,7 +251,7 @@ function cena2(ctx, t, IMG) {
   rrect(ctx, x, y, w, h, 44); ctx.fillStyle = '#e8e8ed'; ctx.fill(); ctx.shadowColor = 'transparent';
   ctx.save(); rrect(ctx, x + 24, y + 24, w - 48, h - 150, 28); ctx.clip();
   ctx.filter = 'grayscale(1) contrast(0.8) brightness(1.05)';
-  const im = IMG.mural; if (im) { const s = (w - 48) / im.width; ctx.drawImage(im, x + 24, y + 24 - 120, im.width * s, im.height * s); }
+  const im = IMG.lista; if (im) { const s = (w - 48) / im.width; ctx.drawImage(im, x + 24, y + 24 - 120, im.width * s, im.height * s); }
   ctx.filter = 'none';
   ctx.fillStyle = 'rgba(245,245,247,0.45)'; ctx.fillRect(x + 24, y + 24, w - 48, h - 150);
   ctx.restore();
@@ -274,23 +274,23 @@ function cena3(ctx, t, IMG) {
     if (t >= t0 - 0.05 && t < t1 + 0.1) manchete(ctx, t, t0 - 0.05, [['cada', { w: txt, c: 'grad' }]], { y: 390, size: 112, sai: t1 + 0.08, tempos: [t0 - 0.12, t0 - 0.03] });
   }
   const g = geo(540, 1230, 540);
-  const card = TELAS.mural?.card1 ? mapa(g, TELAS.mural.card1) : [g.cx - 200, g.cy, 400, 200];
+  const card = TELAS.lista?.alvo ? mapa(g, TELAS.lista.alvo) : [g.cx - 200, g.cy, 400, 200];
   const tTap = T.toque + 0.02;
   const abre = E.inOutCubic(prog(t, tTap + 0.1, tTap + 0.35));
   const muda = E.inOutCubic(prog(t, T.tela, T.tela + 0.3));
   const foco = [card[0] + card[2] / 2, card[1] + card[3] / 2];
   celular(ctx, IMG, g, [
-    { img: 'mural', a: 1 - abre, zoom: 1 + 0.12 * abre, foco },
+    { img: 'lista', a: 1 - abre, zoom: 1 + 0.12 * abre, foco },
     { img: 'detalhe', a: abre * (1 - muda) },
-    { img: 'sucesso', a: muda, dy: 200 * (1 - muda) },
+    { img: 'insight', a: muda, dy: 200 * (1 - muda) },
   ]);
   toque(ctx, t, tTap, [900, 1900], [foco[0] - 60, foco[1]]);
-  // detalhe: o protocolo real sai da tela e flutua ampliado, com brilho
-  const r = TELAS.sucesso?.protocolo;
+  // detalhe: a meta real sai da tela e flutua ampliada, com brilho
+  const r = TELAS.insight?.destaque;
   if (r && t >= T.detalhe - 0.1) {
     const [rx, ry, rw, rh] = mapa(g, r);
     const fs = sp(t, T.detalhe - 0.08, BATIDA);
-    fragmento(ctx, IMG, 'sucesso', r, lerp(rx + rw / 2, 540, fs), lerp(ry + rh / 2, 1430, fs), lerp(g.s, 0.92, fs), { a: clamp(fs * 3), glow: 0.9 * Math.exp(-Math.max(0, t - T.detalhe) * 1.5), t });
+    fragmento(ctx, IMG, 'insight', r, lerp(rx + rw / 2, 540, fs), lerp(ry + rh / 2, 1480, fs), lerp(g.s, 0.86, fs), { a: clamp(fs * 3), glow: 0.9 * Math.exp(-Math.max(0, t - T.detalhe) * 1.5), t });
   }
 }
 
@@ -365,7 +365,7 @@ function cena6(ctx, t, IMG) {
   fundo(ctx, t);
   manchete(ctx, t, T.s6, [['Outra', 'cor,'], ['outra', 'voz,'], ['outro', { w: 'idioma.', c: 'grad' }]], { y: 250, size: 84, tempos: [T.cor - 0.12, T.cor, T.voz2 - 0.12, T.voz2, T.idioma - 0.15, T.idioma] });
   const itens = [
-    { t0: T.cor, x: 220, rot: -0.06, filtro: 'hue-rotate(150deg) saturate(1.2)', rotulo: 'Cor', extra: null },
+    { t0: T.cor, x: 220, rot: -0.06, img: 'inicio_escuro', escuro: true, rotulo: 'Cor', extra: null },
     { t0: T.voz2, x: 540, rot: 0, filtro: null, rotulo: 'Voz', extra: 'voz' },
     { t0: T.idioma, x: 860, rot: 0.06, filtro: null, rotulo: 'Idioma', extra: 'en' },
   ];
@@ -374,7 +374,8 @@ function cena6(ctx, t, IMG) {
     if (s <= 0.001) return;
     const g = geo(it.x, lerp(1250, 1080, s), 330);
     ctx.save(); ctx.translate(it.x, g.cy); ctx.rotate(it.rot); ctx.scale(lerp(1.15, 1, s), lerp(1.15, 1, s)); ctx.translate(-it.x, -g.cy);
-    celular(ctx, IMG, g, [{ img: 'home', a: 1 }], { a: clamp(s * 2), filtro: it.filtro, glow: t >= it.t0 ? Math.exp(-(t - it.t0) * 3) : 0, t });
+    if (it.escuro) { g.statusCor = '#000000'; g.statusTexto = '#ffffff'; }
+    celular(ctx, IMG, g, [{ img: it.img || 'inicio', a: 1 }], { a: clamp(s * 2), glow: t >= it.t0 ? Math.exp(-(t - it.t0) * 3) : 0, t });
     if (it.extra === 'voz') {
       ctx.save(); ctx.globalAlpha = clamp(s * 2);
       rrect(ctx, it.x - 110, g.cy + 120, 220, 70, 35); ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.fill();
@@ -386,7 +387,7 @@ function cena6(ctx, t, IMG) {
       ctx.save(); ctx.globalAlpha = clamp(s * 2);
       rrect(ctx, it.x - 140, g.cy + 120, 280, 76, 20); ctx.fillStyle = 'rgba(29,29,31,0.85)'; ctx.fill();
       ctx.fillStyle = '#fff'; ctx.font = f(24, 600); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('Your app is amazing.', it.x, g.cy + 158); ctx.restore();
+      ctx.fillText('Your wallet, explained.', it.x, g.cy + 158); ctx.restore();
     }
     ctx.restore();
     pilula(ctx, it.rotulo, it.x, 1560, { a: clamp(s * 2), size: 32, escuro: true });
