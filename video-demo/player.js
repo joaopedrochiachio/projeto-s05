@@ -40,22 +40,62 @@ window.filmReady = true;
 if (RENDER) { pinta(0); throw new Error('modo render: player desligado'); }
 
 // ------------------------------------------------------------------ relógio
+// O áudio é tratado como disponível desde o início: celulares (iOS/Android) não pré-carregam mídia
+// antes de um toque, então esperar 'canplaythrough' deixava o vídeo mudo. Só um erro real o desliga.
 const audio = $('audio');
-let temAudio = false, tocando = false, t = 0, base = 0, inicio = 0, vel = 1, mudo = false;
+let temAudio = true, tocando = false, t = 0, base = 0, inicio = 0, vel = 1, mudo = false;
+audio.preload = 'auto';
 audio.src = 'audio/narracao.mp3';
-audio.addEventListener('canplaythrough', () => { temAudio = true; atualizaEstado(); atualizaSom(); }, { once: true });
-audio.addEventListener('error', () => { temAudio = false; atualizaEstado(); atualizaSom(); }, { once: true });
-audio.addEventListener('ended', () => pausa());
+audio.addEventListener('loadedmetadata', () => { atualizaEstado(); atualizaSom(); if (tocando) sincronizaAudio(); });
+audio.addEventListener('error', () => { semAudio(); });
+// O áudio acaba antes do filme (cartão final): o relógio interno continua de onde ele parou.
+audio.addEventListener('ended', () => { if (tocando) { base = audio.duration || t; inicio = performance.now(); } });
 
+const fimAudio = () => (Number.isFinite(audio.duration) ? audio.duration : Infinity);
+const audioRodando = () => temAudio && !audio.paused && !audio.ended;
+function semAudio() {
+  if (!temAudio) return;
+  t = agora(); temAudio = false; base = t; inicio = performance.now();
+  atualizaEstado(); atualizaSom();
+}
+// Relógio: o áudio manda enquanto está alinhado com o filme. Se ele desalinhar (seek ainda
+// carregando, servidor sem Range, travada de rede), o filme segue no relógio interno e o áudio
+// é reposicionado — o vídeo nunca volta para trás por causa do áudio.
+let ultimaTentativa = 0;
 const agora = () => {
-  if (temAudio && tocando) return audio.currentTime;
-  return tocando ? base + ((performance.now() - inicio) / 1000) * vel : t;
+  if (!tocando) return t;
+  const now = performance.now();
+  const ti = base + ((now - inicio) / 1000) * vel;
+  if (audioRodando() && !audio.seeking) {
+    const ta = audio.currentTime;
+    if (Math.abs(ta - ti) < 0.3) { base = ta; inicio = now; return ta; }
+    if (ti < fimAudio() - 0.1 && now - ultimaTentativa > 1000) {
+      ultimaTentativa = now;
+      try { audio.currentTime = ti; } catch { /* tenta de novo no próximo ciclo */ }
+    }
+  }
+  return ti;
 };
+function sincronizaAudio() {
+  if (!temAudio) return;
+  try {
+    if (tocando && t < fimAudio() - 0.05) {
+      if (Math.abs(audio.currentTime - t) > 0.08) audio.currentTime = t;
+      audio.playbackRate = vel; audio.muted = mudo;
+      if (audio.paused) audio.play().catch(semAudio);
+    } else if (!audio.paused) audio.pause();
+  } catch { /* metadados ainda não carregados: o 'loadedmetadata' sincroniza depois */ }
+}
 function toca() {
   if (t >= DUR - 0.05) vaiPara(0);
   tocando = true; $('playGrande').hidden = true;
   base = t; inicio = performance.now();
-  if (temAudio) { audio.currentTime = t; audio.playbackRate = vel; audio.muted = mudo; audio.play().catch(() => { temAudio = false; }); }
+  if (temAudio) {
+    // play() precisa ser chamado dentro do gesto do usuário (clique/tecla)
+    try { audio.currentTime = t; } catch { /* sincroniza no loadedmetadata */ }
+    audio.playbackRate = vel; audio.muted = mudo;
+    if (t < fimAudio() - 0.05) audio.play().catch(semAudio);
+  }
   atualizaPlay(); loop();
 }
 function pausa() {
@@ -68,7 +108,10 @@ const alterna = () => (tocando ? pausa() : toca());
 function vaiPara(nt, { mostra = false } = {}) {
   t = Math.max(0, Math.min(DUR, nt));
   base = t; inicio = performance.now();
-  if (temAudio) audio.currentTime = t;
+  if (temAudio) {
+    if (tocando) sincronizaAudio();
+    else { try { audio.currentTime = Math.min(t, fimAudio()); } catch { /* ainda sem metadados */ } }
+  }
   if (mostra) $('playGrande').hidden = true;
   render();
 }
@@ -184,7 +227,7 @@ $('bSom').addEventListener('click', () => { mudo = !mudo; audio.muted = mudo; at
 $('bTela').addEventListener('click', () => (document.fullscreenElement ? document.exitFullscreen() : $('palco').requestFullscreen?.()));
 
 addEventListener('keydown', (e) => {
-  if (e.target.closest('input, textarea')) return;
+  if (e.target?.closest?.('input, textarea')) return;
   const k = e.key;
   if (k === ' ' || k === 'k') { e.preventDefault(); alterna(); }
   else if (k === 'ArrowRight' || k === 'ArrowLeft') { e.preventDefault(); vaiPara(agora() + (k === 'ArrowRight' ? 2 : -2), { mostra: true }); }
